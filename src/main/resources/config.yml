@@ -1,0 +1,30 @@
+# ranges for custom data in percent
+# default for all: [-30, 30]
+durability-amplifier-range: [-30, 30]
+use-durability-amplifier: true
+
+damage-amplifier-range: [-30, 30]
+use-damage-amplifier: true
+
+# using only natural numbers
+# default: true
+natural-numbers: true
+
+# armor worn by the player modify damage dealt
+# default: false
+armor-damage-amplifier: false
+
+# ignore certain items
+ignore-items: []
+
+# items from loot tables being modified
+# default: true
+use-loot-tables: true
+
+# items from mob drops being modified
+# default: true
+use-mob-drops: true
+
+# items traded from villager being modified
+# default true
+use-villager-trades: true

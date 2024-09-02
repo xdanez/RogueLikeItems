@@ -1,0 +1,11 @@
+name: RogueLikeItems
+version: '${project.version}'
+main: me.xdanez.roguelikeitems.RogueLikeItems
+api-version: '1.20'
+author: xDaneZ
+
+commands:
+  rli:
+    description: "RogueLikeItems commands"
+    aliases:
+    - roguelikeitems
