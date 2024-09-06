@@ -141,6 +141,12 @@ final public class ConfigUtil {
 
             return Triple.of(ConfigState.ERROR, from, to);
         }
+
+        if (from > to) {
+            RogueLikeItems.logger().warning(config.getVal() + " not in correct order");
+            return Triple.of(ConfigState.WARNING, to, from);
+        }
+
         return Triple.of(ConfigState.SUCCESS, from, to);
     }
 
