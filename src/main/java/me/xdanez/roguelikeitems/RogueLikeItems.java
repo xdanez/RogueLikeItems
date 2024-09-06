@@ -5,8 +5,12 @@ import me.xdanez.roguelikeitems.enums.Config;
 import me.xdanez.roguelikeitems.listeners.*;
 import me.xdanez.roguelikeitems.utils.ConfigUtil;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -62,5 +66,12 @@ public final class RogueLikeItems extends JavaPlugin {
 
     public static Object getConfigVal(Config config) {
         return plugin.getConfig().get(config.getVal());
+    }
+
+    public static Configuration getPluginYML() {
+        InputStream in = RogueLikeItems.class.getResourceAsStream("/plugin.yml");
+        assert in != null;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        return YamlConfiguration.loadConfiguration(reader);
     }
 }
