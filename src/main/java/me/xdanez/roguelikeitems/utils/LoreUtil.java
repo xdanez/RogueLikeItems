@@ -26,8 +26,6 @@ final public class LoreUtil {
         int amplifiedMaxDurability = DurabilityAmplifierUtil.getAmplifiedMaxDurability(item);
         int currentDurability = DurabilityAmplifierUtil.getCurrentDurability(item);
 
-        System.out.println(amplifier);
-
         if (amplifier != 0) {
             lore.add(
                     Component.text((amplifier > 0 ? "+" : "")
