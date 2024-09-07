@@ -132,6 +132,7 @@ final public class ConfigUtil {
 
     private static Triple<ConfigState, Integer, Integer> validRange(Config config) {
         List<Integer> defaultRange = RogueLikeItems.defaultConfig().getIntegerList(config.getVal());
+        ConfigState state = ConfigState.SUCCESS;
         int from = defaultRange.get(0);
         int to = defaultRange.get(1);
         try {
@@ -139,8 +140,9 @@ final public class ConfigUtil {
             if (configVal instanceof List<?>) {
                 List<?> range = (List<?>) configVal;
                 if (range.isEmpty()) {
+                    state = ConfigState.WARNING;
                     RogueLikeItems.logger().warning(config.getVal() + " is empty. Using default values.");
-                    return Triple.of(ConfigState.WARNING, from, to);
+                    return Triple.of(state, from, to);
                 }
                 from = Integer.parseInt(range.get(0).toString());
                 to = Integer.parseInt(range.get(1).toString());
@@ -150,9 +152,19 @@ final public class ConfigUtil {
                 to = value;
             }
         } catch (IllegalArgumentException | ClassCastException e) {
+            state = ConfigState.ERROR;
             RogueLikeItems.logger().severe(config.getVal() + " wrongfully declared. Using default values");
 
-            return Triple.of(ConfigState.ERROR, from, to);
+            return Triple.of(state, from, to);
+        }
+
+        if (from <= -100) {
+            state = ConfigState.WARNING;
+            RogueLikeItems.logger()
+                    .warning("A value for " + config.getVal() + " is set to -100 or less. "
+                            + "This can lead to " +
+                            (config == Config.DURABILITY_AMPLIFIER_RANGE ? "items having no durability"
+                                    : config == Config.DAMAGE_AMPLIFIER_RANGE ? "items doing no damage or even heal" : "problems"));
         }
 
         if (from > to) {
@@ -160,7 +172,7 @@ final public class ConfigUtil {
             return Triple.of(ConfigState.WARNING, to, from);
         }
 
-        return Triple.of(ConfigState.SUCCESS, from, to);
+        return Triple.of(state, from, to);
     }
 
     private static void setRangeValues(int from, int to, Config config) {
