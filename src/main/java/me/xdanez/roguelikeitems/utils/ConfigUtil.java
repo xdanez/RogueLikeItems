@@ -78,20 +78,23 @@ final public class ConfigUtil {
         ArrayList<ItemStack> ignoreItemsList = new ArrayList<>();
         ConfigState state = ConfigState.SUCCESS;
         try {
-            Object instanceCheck = RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS);
-            if (!(instanceCheck instanceof List)) {
+            Object configVal = RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS);
+            if (!(configVal instanceof List)) {
                 RogueLikeItems.logger().severe("ignore-items wrongfully declared");
                 return Pair.of(ConfigState.ERROR, List.of());
             }
 
-            List<String> ignoreItemsListConfig = RogueLikeItems.config().getStringList(Config.IGNORE_ITEMS.getVal());
+            List<?> ignoreItemsListConfig = (List<?>) configVal;
 
             if (ignoreItemsListConfig.isEmpty()) {
                 return Pair.of(state, ignoreItemsList);
             }
-            for (String item : ignoreItemsListConfig) {
+            for (Object item : ignoreItemsListConfig) {
                 String materialString =
-                        item.toUpperCase().replaceAll(" ", "_").replaceAll("-", "_");
+                        item.toString()
+                                .toUpperCase()
+                                .replaceAll(" ", "_")
+                                .replaceAll("-", "_");
                 try {
                     Material material = Material.valueOf(materialString);
                     if (!ItemType.isModifiable(material)) {
