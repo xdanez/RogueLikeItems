@@ -115,10 +115,16 @@ final public class ConfigUtil {
     private static Pair<ConfigState, Boolean> validateTag(Config config) {
         boolean tag = RogueLikeItems.defaultConfig().getBoolean(config.getVal());
         try {
-            tag = RogueLikeItems.config().getBoolean(config.getVal());
+            Object configVal = RogueLikeItems.getConfigVal(config);
+            if (!configVal.toString().equalsIgnoreCase("true")
+                    && !configVal.toString().equalsIgnoreCase("false")) {
+                RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared. Using default value");
+                return Pair.of(ConfigState.ERROR, tag);
+            }
+            tag = Boolean.parseBoolean(configVal.toString().trim());
         } catch (IllegalArgumentException e) {
-            RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared");
-            return Pair.of(ConfigState.ERROR, false);
+            RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared. Using default value");
+            return Pair.of(ConfigState.ERROR, tag);
         }
 
         return Pair.of(ConfigState.SUCCESS, tag);
