@@ -129,13 +129,20 @@ final public class ConfigUtil {
         int from = defaultRange.get(0);
         int to = defaultRange.get(1);
         try {
-            List<?> range = (List<?>) RogueLikeItems.getConfigVal(config);
-            if (range == null || range.isEmpty()) {
-                RogueLikeItems.logger().warning(config.getVal() + " is empty. Using default values.");
-                return Triple.of(ConfigState.WARNING, from, to);
+            Object configVal = RogueLikeItems.getConfigVal(config);
+            if (configVal instanceof List<?>) {
+                List<?> range = (List<?>) configVal;
+                if (range.isEmpty()) {
+                    RogueLikeItems.logger().warning(config.getVal() + " is empty. Using default values.");
+                    return Triple.of(ConfigState.WARNING, from, to);
+                }
+                from = Integer.parseInt(range.get(0).toString());
+                to = Integer.parseInt(range.get(1).toString());
+            } else {
+                int value = Integer.parseInt(configVal.toString());
+                from = value;
+                to = value;
             }
-            from = Integer.parseInt(range.get(0).toString());
-            to = Integer.parseInt(range.get(1).toString());
         } catch (IllegalArgumentException | ClassCastException e) {
             RogueLikeItems.logger().severe(config.getVal() + " wrongfully declared. Using default values");
 
