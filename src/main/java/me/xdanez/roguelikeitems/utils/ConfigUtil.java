@@ -80,7 +80,7 @@ final public class ConfigUtil {
         try {
             Object configVal = RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS);
             if (!(configVal instanceof List)) {
-                RogueLikeItems.logger().severe("ignore-items wrongfully declared");
+                RogueLikeItems.logger().severe(Config.IGNORE_ITEMS.getVal() + " wrongfully declared");
                 return Pair.of(ConfigState.ERROR, List.of());
             }
 
@@ -109,7 +109,7 @@ final public class ConfigUtil {
                 }
             }
         } catch (IllegalArgumentException e) {
-            RogueLikeItems.logger().severe("ignore-item-list wrongfully declared");
+            RogueLikeItems.logger().severe(Config.IGNORE_ITEMS.getVal() + " wrongfully declared");
             return Pair.of(ConfigState.ERROR, ignoreItemsList);
         }
         return Pair.of(state, ignoreItemsList);
