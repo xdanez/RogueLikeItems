@@ -1,4 +1,5 @@
 # ranges for custom data in percent
+# set range with brackets or use a single number for a fixed value
 # default for all: [-30, 30]
 durability-amplifier-range: [-30, 30]
 use-durability-amplifier: true

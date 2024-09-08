@@ -78,20 +78,23 @@ final public class ConfigUtil {
         ArrayList<ItemStack> ignoreItemsList = new ArrayList<>();
         ConfigState state = ConfigState.SUCCESS;
         try {
-            Object instanceCheck = RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS);
-            if (!(instanceCheck instanceof List)) {
+            Object configVal = RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS);
+            if (!(configVal instanceof List)) {
                 RogueLikeItems.logger().severe("ignore-items wrongfully declared");
                 return Pair.of(ConfigState.ERROR, List.of());
             }
 
-            List<String> ignoreItemsListConfig = RogueLikeItems.config().getStringList(Config.IGNORE_ITEMS.getVal());
+            List<?> ignoreItemsListConfig = (List<?>) configVal;
 
             if (ignoreItemsListConfig.isEmpty()) {
                 return Pair.of(state, ignoreItemsList);
             }
-            for (String item : ignoreItemsListConfig) {
+            for (Object item : ignoreItemsListConfig) {
                 String materialString =
-                        item.toUpperCase().replaceAll(" ", "_").replaceAll("-", "_");
+                        item.toString()
+                                .toUpperCase()
+                                .replaceAll(" ", "_")
+                                .replaceAll("-", "_");
                 try {
                     Material material = Material.valueOf(materialString);
                     if (!ItemType.isModifiable(material)) {
@@ -115,10 +118,16 @@ final public class ConfigUtil {
     private static Pair<ConfigState, Boolean> validateTag(Config config) {
         boolean tag = RogueLikeItems.defaultConfig().getBoolean(config.getVal());
         try {
-            tag = RogueLikeItems.config().getBoolean(config.getVal());
+            Object configVal = RogueLikeItems.getConfigVal(config);
+            if (!configVal.toString().equalsIgnoreCase("true")
+                    && !configVal.toString().equalsIgnoreCase("false")) {
+                RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared. Using default value");
+                return Pair.of(ConfigState.ERROR, tag);
+            }
+            tag = Boolean.parseBoolean(configVal.toString().trim());
         } catch (IllegalArgumentException e) {
-            RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared");
-            return Pair.of(ConfigState.ERROR, false);
+            RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared. Using default value");
+            return Pair.of(ConfigState.ERROR, tag);
         }
 
         return Pair.of(ConfigState.SUCCESS, tag);
@@ -126,22 +135,47 @@ final public class ConfigUtil {
 
     private static Triple<ConfigState, Integer, Integer> validRange(Config config) {
         List<Integer> defaultRange = RogueLikeItems.defaultConfig().getIntegerList(config.getVal());
+        ConfigState state = ConfigState.SUCCESS;
         int from = defaultRange.get(0);
         int to = defaultRange.get(1);
         try {
-            List<?> range = (List<?>) RogueLikeItems.getConfigVal(config);
-            if (range == null || range.isEmpty()) {
-                RogueLikeItems.logger().warning(config.getVal() + " is empty. Using default values.");
-                return Triple.of(ConfigState.WARNING, from, to);
+            Object configVal = RogueLikeItems.getConfigVal(config);
+            if (configVal instanceof List<?>) {
+                List<?> range = (List<?>) configVal;
+                if (range.isEmpty()) {
+                    state = ConfigState.WARNING;
+                    RogueLikeItems.logger().warning(config.getVal() + " is empty. Using default values.");
+                    return Triple.of(state, from, to);
+                }
+                from = Integer.parseInt(range.get(0).toString());
+                to = Integer.parseInt(range.get(1).toString());
+            } else {
+                int value = Integer.parseInt(configVal.toString());
+                from = value;
+                to = value;
             }
-            from = Integer.parseInt(range.get(0).toString());
-            to = Integer.parseInt(range.get(1).toString());
         } catch (IllegalArgumentException | ClassCastException e) {
+            state = ConfigState.ERROR;
             RogueLikeItems.logger().severe(config.getVal() + " wrongfully declared. Using default values");
 
-            return Triple.of(ConfigState.ERROR, from, to);
+            return Triple.of(state, from, to);
         }
-        return Triple.of(ConfigState.SUCCESS, from, to);
+
+        if (from <= -100) {
+            state = ConfigState.WARNING;
+            RogueLikeItems.logger()
+                    .warning("A value for " + config.getVal() + " is set to -100 or less. "
+                            + "This can lead to " +
+                            (config == Config.DURABILITY_AMPLIFIER_RANGE ? "items having no durability"
+                                    : config == Config.DAMAGE_AMPLIFIER_RANGE ? "items doing no damage or even heal" : "problems"));
+        }
+
+        if (from > to) {
+            RogueLikeItems.logger().warning(config.getVal() + " not in correct order");
+            return Triple.of(ConfigState.WARNING, to, from);
+        }
+
+        return Triple.of(state, from, to);
     }
 
     private static void setRangeValues(int from, int to, Config config) {
