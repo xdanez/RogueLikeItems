@@ -85,12 +85,17 @@ final public class DurabilityAmplifierUtil {
                 || (durabilityLevel == 2 && breakChance <= 33)
                 || (durabilityLevel == 3 && breakChance <= 25)
         ) {
+            int amplifiedMaxDurability = durability.getAmplifiedMaxDurability();
             durability.setCurrentDurability(durability.getCurrentDurability() - amount);
-            double percentageLeft = (double) durability.getCurrentDurability() / durability.getAmplifiedMaxDurability();
+            double percentageLeft = (double) durability.getCurrentDurability() / amplifiedMaxDurability;
             int ogDurabilityLeft = (int) Math.ceil(ogDurability * percentageLeft);
 
             Damageable dmg = (Damageable) meta;
-            dmg.setDamage(ogDurability - ogDurabilityLeft);
+            if (amplifiedMaxDurability <= 0) {
+                dmg.setDamage(ogDurability);
+            } else {
+                dmg.setDamage(ogDurability - ogDurabilityLeft);
+            }
 
             container.set(key, new DurabilityDataType(), durability);
             LoreUtil.updateDurabilityLore(meta, durability.getCurrentDurability(), durability.getAmplifiedMaxDurability());
@@ -112,7 +117,7 @@ final public class DurabilityAmplifierUtil {
         assert durability != null;
 
         durability.setCurrentDurability(repairedDurability);
-        container.set(key, new DurabilityDataType(),durability);
+        container.set(key, new DurabilityDataType(), durability);
         LoreUtil.updateDurabilityLore(iDmg, durability.getCurrentDurability(), durability.getAmplifiedMaxDurability());
         item.setItemMeta(iDmg);
     }
