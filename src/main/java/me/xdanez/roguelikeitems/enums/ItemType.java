@@ -33,12 +33,12 @@ public enum ItemType {
             Material.DIAMOND_PICKAXE, Material.DIAMOND_AXE, Material.DIAMOND_SHOVEL, Material.DIAMOND_HOE,
             Material.NETHERITE_PICKAXE, Material.NETHERITE_AXE, Material.NETHERITE_SHOVEL, Material.NETHERITE_HOE,
             Material.SHEARS, Material.FISHING_ROD, Material.CARROT_ON_A_STICK, Material.WARPED_FUNGUS_ON_A_STICK,
-            Material.BRUSH
+            Material.BRUSH, Material.FLINT_AND_STEEL
     );
 
     private final static Set<Material> noDamage = Set.of(
             Material.FISHING_ROD, Material.CARROT_ON_A_STICK, Material.WARPED_FUNGUS_ON_A_STICK,
-            Material.SHEARS, Material.SHIELD, Material.BRUSH
+            Material.SHEARS, Material.SHIELD, Material.BRUSH, Material.FLINT_AND_STEEL
     );
 
     public static ItemType getItemType(Material material) {
