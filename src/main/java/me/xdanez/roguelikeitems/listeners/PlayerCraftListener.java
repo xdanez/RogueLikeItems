@@ -9,26 +9,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.util.*;
 
 public class PlayerCraftListener implements Listener {
 
     @EventHandler
     public void onPlayerCraft(CraftItemEvent e) {
-        CraftingInventory craftingInventory = e.getInventory();
-
-        // important for shift-crafting
-        if (craftingInventory.isEmpty()) return;
-        if (craftingInventory.getItem(0) == null) return; // result
-
-        Player player = (Player) e.getWhoClicked();
-        boolean freeSpace = player.getInventory().firstEmpty() != -1;
-
-        if (!freeSpace) return;
         final ItemStack result = e.getInventory().getResult();
 
         if (result == null) return;
@@ -40,7 +27,7 @@ public class PlayerCraftListener implements Listener {
         if (DamageAmplifierUtil.hasDamageAmplifier(result)) return;
 
         if (e.isShiftClick()) {
-            shiftCrafting(e, player, material);
+            shiftCrafting(e, material);
             return;
         }
 
@@ -49,18 +36,19 @@ public class PlayerCraftListener implements Listener {
         e.setCurrentItem(item);
     }
 
-    // This is stupid... why can't Paper be better at this?
-    private void shiftCrafting(CraftItemEvent e, Player player, Material material) {
-        int craftedAmt = getCraftedAmount(e);
+    private void shiftCrafting(CraftItemEvent e, Material material) {
+        e.setCancelled(true);
+        Player player = (Player) e.getWhoClicked();
 
         // without armor and shield slots
         int freeSlots = getAmountFreeSlots(player.getInventory()) - 5;
 
-        if (freeSlots < 0)  {
+        if (freeSlots <= 0) {
             e.setCancelled(true);
             return;
         }
 
+        int craftedAmt = getCraftedAmount(e);
         if (freeSlots < craftedAmt)
             craftedAmt = freeSlots;
 
@@ -71,26 +59,31 @@ public class PlayerCraftListener implements Listener {
         }
         ItemStack[] craftingGrid = e.getInventory().getMatrix();
         for (ItemStack item : craftingGrid) {
-            if (item == null || item.getType().equals(Material.AIR)) continue;
-            item.setAmount(item.getAmount() - craftedAmt);
+            if (item == null || item.getType().equals(Material.AIR)) {
+                continue;
+            }
+            int itemAmt = item.getAmount() - craftedAmt;
+            item.setAmount(itemAmt);
+        }
+        e.getInventory().setMatrix(craftingGrid);
+        if (e.getInventory().getResult() == null) {
+            e.getInventory().setResult(null);
         }
     }
 
     private int getCraftedAmount(CraftItemEvent e) {
-        if (e.isShiftClick()) {
-            final ItemStack recipeResult = e.getRecipe().getResult();
-            final int resultAmt = recipeResult.getAmount();
-            int leastIngredient = -1;
-            for (ItemStack item : e.getInventory().getMatrix()) {
-                if (item == null || item.getType().equals(Material.AIR)) continue;
-                final int re = item.getAmount() * resultAmt;
+        final ItemStack result = e.getInventory().getResult();
+        if (result == null) return 0;
+        int resultAmt = result.getAmount();
+        int leastIngredient = -1;
+        for (ItemStack item : e.getInventory().getMatrix()) {
+            if (item == null || item.getType().equals(Material.AIR)) continue;
+            final int re = item.getAmount() * resultAmt;
 
-                if (leastIngredient != -1 && re > leastIngredient) continue;
-                leastIngredient = item.getAmount() * resultAmt;
-            }
-            return leastIngredient;
+            if (leastIngredient == -1 || re < leastIngredient)
+                leastIngredient = re;
         }
-        return Objects.requireNonNull(e.getCurrentItem()).getAmount();
+        return leastIngredient;
     }
 
     private int getAmountFreeSlots(PlayerInventory inventory) {
