@@ -27,5 +27,9 @@ use-loot-tables: true
 use-mob-drops: true
 
 # items traded from villager being modified
-# default true
+# default: true
 use-villager-trades: true
+
+# items crafted being modified
+# default: true
+use-crafting: true

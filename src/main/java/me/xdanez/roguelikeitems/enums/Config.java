@@ -12,7 +12,8 @@ public enum Config {
     NATURAL_NUMBERS("natural-numbers"),
     USE_LOOT_TABLES("use-loot-tables"),
     USE_MOB_DROPS("use-mob-drops"),
-    USE_VILLAGER_TRADES("use-villager-trades");
+    USE_VILLAGER_TRADES("use-villager-trades"),
+    USE_CRAFTING("use-crafting");
 
     private final String val;
     Config(String val) {
