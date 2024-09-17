@@ -42,6 +42,9 @@ final public class ConfigUtil {
         Pair<ConfigState, Boolean> validUseVillagerTrades = validateTag(Config.USE_VILLAGER_TRADES);
         setTag(validUseVillagerTrades.getRight(), Config.USE_VILLAGER_TRADES);
 
+        Pair<ConfigState, Boolean> validUseCrafting = validateTag(Config.USE_CRAFTING);
+        setTag(validUseCrafting.getRight(), Config.USE_CRAFTING);
+
         Pair<ConfigState, List<ItemStack>> validIgnoreList = validIgnoreList();
         ConfigData.getConfigData().setIgnoreItemList(validIgnoreList.getRight());
 
@@ -54,7 +57,8 @@ final public class ConfigUtil {
                 || validUseDamageAmplifier.getLeft().equals(ConfigState.ERROR)
                 || validUseDurabilityAmplifier.getLeft().equals(ConfigState.ERROR)
                 || validUseVillagerTrades.getLeft().equals(ConfigState.ERROR)
-                || validIgnoreList.getLeft().equals(ConfigState.ERROR)) {
+                || validIgnoreList.getLeft().equals(ConfigState.ERROR)
+                || validUseCrafting.getLeft().equals(ConfigState.ERROR)) {
             return ConfigState.ERROR;
         }
 
@@ -67,7 +71,8 @@ final public class ConfigUtil {
                 || validUseDamageAmplifier.getLeft().equals(ConfigState.WARNING)
                 || validUseDurabilityAmplifier.getLeft().equals(ConfigState.WARNING)
                 || validUseVillagerTrades.getLeft().equals(ConfigState.WARNING)
-                || validIgnoreList.getLeft().equals(ConfigState.WARNING)) {
+                || validIgnoreList.getLeft().equals(ConfigState.WARNING)
+                || validUseCrafting.getLeft().equals(ConfigState.WARNING)) {
             return ConfigState.WARNING;
         }
 
@@ -215,6 +220,9 @@ final public class ConfigUtil {
                 break;
             case USE_VILLAGER_TRADES:
                 configData.setUseVillagerTrades(tag);
+                break;
+            case USE_CRAFTING:
+                configData.setUseCrafting(tag);
                 break;
         }
     }

@@ -1,6 +1,7 @@
 package me.xdanez.roguelikeitems.listeners;
 
 import me.xdanez.roguelikeitems.enums.ItemType;
+import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.utils.AmplifierUtil;
 import me.xdanez.roguelikeitems.utils.DamageAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.DurabilityAmplifierUtil;
@@ -16,6 +17,8 @@ public class PlayerCraftListener implements Listener {
 
     @EventHandler
     public void onPlayerCraft(CraftItemEvent e) {
+        if (!ConfigData.getConfigData().useCrafting()) return;
+
         final ItemStack result = e.getInventory().getResult();
 
         if (result == null) return;

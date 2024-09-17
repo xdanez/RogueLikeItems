@@ -25,6 +25,16 @@ public class ConfigData {
     private boolean useMobDrops;
     private boolean useDurabilityAmplifier;
     private boolean useDamageAmplifier;
+    private boolean useVillagerTrades;
+    private boolean useCrafting;
+
+    public boolean useCrafting() {
+        return useCrafting;
+    }
+
+    public void setUseCrafting(boolean useCrafting) {
+        this.useCrafting = useCrafting;
+    }
 
     public boolean useVillagerTrades() {
         return useVillagerTrades;
@@ -33,8 +43,6 @@ public class ConfigData {
     public void setUseVillagerTrades(boolean useVillagerTrades) {
         this.useVillagerTrades = useVillagerTrades;
     }
-
-    private boolean useVillagerTrades;
 
     public Pair<Integer, Integer> getDurabilityRange() {
         return durabilityRange;
