@@ -1,6 +1,6 @@
 package me.xdanez.roguelikeitems.listeners;
 
-import me.xdanez.roguelikeitems.utils.DamageAmplifierUtil;
+import me.xdanez.roguelikeitems.utils.amplifiers.DamageAmplifierUtil;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;

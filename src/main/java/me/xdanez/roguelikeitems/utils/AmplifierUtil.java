@@ -2,6 +2,8 @@ package me.xdanez.roguelikeitems.utils;
 
 import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
+import me.xdanez.roguelikeitems.utils.amplifiers.DamageAmplifierUtil;
+import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

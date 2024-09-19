@@ -1,6 +1,8 @@
 package me.xdanez.roguelikeitems.utils;
 
 import me.xdanez.roguelikeitems.enums.ItemType;
+import me.xdanez.roguelikeitems.utils.amplifiers.DamageAmplifierUtil;
+import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;

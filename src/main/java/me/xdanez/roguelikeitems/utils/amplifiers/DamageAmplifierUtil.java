@@ -1,10 +1,12 @@
-package me.xdanez.roguelikeitems.utils;
+package me.xdanez.roguelikeitems.utils.amplifiers;
 
 import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.AttackDamage;
 import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
+import me.xdanez.roguelikeitems.utils.LoreUtil;
+import me.xdanez.roguelikeitems.utils.NumberUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Arrow;
