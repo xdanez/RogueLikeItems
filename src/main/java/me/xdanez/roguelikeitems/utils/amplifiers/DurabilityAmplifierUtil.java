@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 final public class DurabilityAmplifierUtil {
 
-    private static final NamespacedKey key = new NamespacedKey(RogueLikeItems.getPlugin(RogueLikeItems.class), "durability");
+    private static final NamespacedKey key = new NamespacedKey(RogueLikeItems.plugin(), "durability");
 
     public static void setDurabilityData(ItemStack item) {
 

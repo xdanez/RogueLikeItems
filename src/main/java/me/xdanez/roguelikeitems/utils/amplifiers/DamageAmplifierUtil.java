@@ -21,10 +21,10 @@ import java.util.concurrent.ThreadLocalRandom;
 final public class DamageAmplifierUtil {
 
     private static final NamespacedKey DAMAGE_AMPLIFIER =
-            new NamespacedKey(RogueLikeItems.getPlugin(RogueLikeItems.class), "damageAmplifier");
+            new NamespacedKey(RogueLikeItems.plugin(), "damageAmplifier");
 
     private static final NamespacedKey ARROW_DAMAGE_AMPLIFIER =
-            new NamespacedKey(RogueLikeItems.getPlugin(RogueLikeItems.class), "arrowDamage");
+            new NamespacedKey(RogueLikeItems.plugin(), "arrowDamage");
 
     public static void setDamageAmplifierData(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
