@@ -7,13 +7,22 @@ use-durability-amplifier: true
 damage-amplifier-range: [-30, 30]
 use-damage-amplifier: true
 
-# using only natural numbers
-# default: true
-natural-numbers: true
-
 # armor worn by the player modify damage dealt
 # default: false
 armor-damage-amplifier: false
+
+# ranges for max-health in half hearts
+# default: [-6, 6]
+max-health-amplifier-range: [-6, 6]
+use-max-health-amplifier: true
+
+# max-health being used on all items
+# default: false
+max-health-tools: false
+
+# using only natural numbers
+# default: true
+natural-numbers: true
 
 # ignore certain items
 ignore-items: []
