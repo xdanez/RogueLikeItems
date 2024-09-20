@@ -3,6 +3,7 @@ package me.xdanez.roguelikeitems.utils;
 import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.utils.amplifiers.DamageAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
+import me.xdanez.roguelikeitems.utils.amplifiers.MaxHealthAmplifierUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
@@ -68,6 +69,22 @@ final public class LoreUtil {
                                     .color(amplifier < 0 ? 255 : 0,
                                             amplifier > 0 ? 255 : 0,
                                             0)))
+            );
+        }
+        meta.lore(lore);
+        item.setItemMeta(meta);
+    }
+
+    public static void setMaxHealthAmplifierLore(ItemStack item, int amplifier) {
+        ItemMeta meta = item.getItemMeta();
+        List<Component> lore = meta.lore();
+        if (lore == null) lore = new ArrayList<>();
+
+        if (!MaxHealthAmplifierUtil.hasMaxHealthAmplifier(item)) return;
+
+        if (amplifier != 0) {
+            lore.add(Component.text((amplifier > 0 ? "+" : "") + amplifier + "HP").decorate(TextDecoration.BOLD)
+                    .style(Style.style(TextColor.color(amplifier < 0 ? 255 : 0, amplifier > 0 ? 255 : 0, 0)))
             );
         }
         meta.lore(lore);
