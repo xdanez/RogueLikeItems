@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 final public class MaxHealthAmplifierUtil {
@@ -34,6 +35,11 @@ final public class MaxHealthAmplifierUtil {
         container.set(MAX_HEALTH_AMPLIFIER, PersistentDataType.INTEGER, amplifier);
         item.setItemMeta(meta);
         LoreUtil.setMaxHealthAmplifierLore(item, amplifier);
+    }
+
+    public static int getMaxHealthAmplifier(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return Objects.requireNonNull(container.get(MAX_HEALTH_AMPLIFIER, PersistentDataType.INTEGER));
     }
 
     public static boolean hasMaxHealthAmplifier(ItemStack item) {
