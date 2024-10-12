@@ -40,7 +40,7 @@ public final class RogueLikeItems extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerPrepareAnvilListener(), this);
         getServer().getPluginManager().registerEvents(new VillagerAcquireTradeListener(), this);
         getServer().getPluginManager().registerEvents(new ItemInItemFrameSpawnListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerArmorChangeListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerChangeEquipmentListener(), this);
 
         Objects.requireNonNull(getCommand("rli")).setExecutor(new RLI());
     }
