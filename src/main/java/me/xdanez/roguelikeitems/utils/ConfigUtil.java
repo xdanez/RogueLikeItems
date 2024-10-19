@@ -181,13 +181,20 @@ final public class ConfigUtil {
             return Triple.of(state, from, to);
         }
 
-        if (from <= -100) {
+        if (!config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) && from <= -100) {
             state = ConfigState.WARNING;
             RogueLikeItems.logger()
                     .warning("A value for " + config.getVal() + " is set to -100 or less. "
                             + "This can lead to " +
                             (config == Config.DURABILITY_AMPLIFIER_RANGE ? "items having no durability"
                                     : config == Config.DAMAGE_AMPLIFIER_RANGE ? "items doing no damage or even heal" : "problems"));
+        }
+
+        if (config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) && from <= -20) {
+            state = ConfigState.WARNING;
+            RogueLikeItems.logger()
+                    .warning("A value for " + config.getVal() + " is set to -20 or less. " +
+                            "This can reduce the health to half a heart");
         }
 
         if (from > to) {
