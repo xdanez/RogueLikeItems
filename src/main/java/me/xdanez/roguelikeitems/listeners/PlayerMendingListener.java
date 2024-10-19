@@ -1,6 +1,6 @@
 package me.xdanez.roguelikeitems.listeners;
 
-import me.xdanez.roguelikeitems.utils.DurabilityAmplifierUtil;
+import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemMendEvent;

@@ -1,10 +1,12 @@
-package me.xdanez.roguelikeitems.utils;
+package me.xdanez.roguelikeitems.utils.amplifiers;
 
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.models.Durability;
 import me.xdanez.roguelikeitems.models.DurabilityDataType;
+import me.xdanez.roguelikeitems.utils.LoreUtil;
+import me.xdanez.roguelikeitems.utils.NumberUtil;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 final public class DurabilityAmplifierUtil {
 
-    private static final NamespacedKey key = new NamespacedKey(RogueLikeItems.getPlugin(RogueLikeItems.class), "durability");
+    private static final NamespacedKey key = new NamespacedKey(RogueLikeItems.plugin(), "durability");
 
     public static void setDurabilityData(ItemStack item) {
 

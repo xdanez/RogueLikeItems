@@ -21,6 +21,9 @@ final public class ConfigUtil {
         Triple<ConfigState, Integer, Integer> validDamageAmplifierRange = validRange(Config.DAMAGE_AMPLIFIER_RANGE);
         setRangeValues(validDamageAmplifierRange.getMiddle(), validDamageAmplifierRange.getRight(), Config.DAMAGE_AMPLIFIER_RANGE);
 
+        Triple<ConfigState, Integer, Integer> validMaxHealthAmplifierRange = validRange(Config.MAX_HEALTH_AMPLIFIER_RANGE);
+        setRangeValues(validMaxHealthAmplifierRange.getMiddle(), validMaxHealthAmplifierRange.getRight(), Config.MAX_HEALTH_AMPLIFIER_RANGE);
+
         Pair<ConfigState, Boolean> validArmorDamageAmplifierTag = validateTag(Config.ARMOR_DAMAGE_AMPLIFIER);
         setTag(validArmorDamageAmplifierTag.getRight(), Config.ARMOR_DAMAGE_AMPLIFIER);
 
@@ -48,6 +51,12 @@ final public class ConfigUtil {
         Pair<ConfigState, List<ItemStack>> validIgnoreList = validIgnoreList();
         ConfigData.getConfigData().setIgnoreItemList(validIgnoreList.getRight());
 
+        Pair<ConfigState, Boolean> validUseMaxHealthAmplifier = validateTag(Config.USE_MAX_HEALTH_AMPLIFIER);
+        setTag(validUseMaxHealthAmplifier.getRight(), Config.USE_MAX_HEALTH_AMPLIFIER);
+
+        Pair<ConfigState, Boolean> validMaxHealthOnTool = validateTag(Config.MAX_HEALTH_ON_TOOLS);
+        setTag(validMaxHealthOnTool.getRight(), Config.MAX_HEALTH_ON_TOOLS);
+
         if (validDurabilityRange.getLeft().equals(ConfigState.ERROR)
                 || validDamageAmplifierRange.getLeft().equals(ConfigState.ERROR)
                 || validArmorDamageAmplifierTag.getLeft().equals(ConfigState.ERROR)
@@ -58,7 +67,10 @@ final public class ConfigUtil {
                 || validUseDurabilityAmplifier.getLeft().equals(ConfigState.ERROR)
                 || validUseVillagerTrades.getLeft().equals(ConfigState.ERROR)
                 || validIgnoreList.getLeft().equals(ConfigState.ERROR)
-                || validUseCrafting.getLeft().equals(ConfigState.ERROR)) {
+                || validUseCrafting.getLeft().equals(ConfigState.ERROR)
+                || validMaxHealthAmplifierRange.getLeft().equals(ConfigState.ERROR)
+                || validUseMaxHealthAmplifier.getLeft().equals(ConfigState.ERROR)
+                || validMaxHealthOnTool.getLeft().equals(ConfigState.ERROR)) {
             return ConfigState.ERROR;
         }
 
@@ -72,7 +84,10 @@ final public class ConfigUtil {
                 || validUseDurabilityAmplifier.getLeft().equals(ConfigState.WARNING)
                 || validUseVillagerTrades.getLeft().equals(ConfigState.WARNING)
                 || validIgnoreList.getLeft().equals(ConfigState.WARNING)
-                || validUseCrafting.getLeft().equals(ConfigState.WARNING)) {
+                || validUseCrafting.getLeft().equals(ConfigState.WARNING)
+                || validMaxHealthAmplifierRange.getLeft().equals(ConfigState.WARNING)
+                || validUseMaxHealthAmplifier.getLeft().equals(ConfigState.WARNING)
+                || validMaxHealthOnTool.getLeft().equals(ConfigState.WARNING)) {
             return ConfigState.WARNING;
         }
 
@@ -166,13 +181,20 @@ final public class ConfigUtil {
             return Triple.of(state, from, to);
         }
 
-        if (from <= -100) {
+        if (!config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) && from <= -100) {
             state = ConfigState.WARNING;
             RogueLikeItems.logger()
                     .warning("A value for " + config.getVal() + " is set to -100 or less. "
                             + "This can lead to " +
                             (config == Config.DURABILITY_AMPLIFIER_RANGE ? "items having no durability"
                                     : config == Config.DAMAGE_AMPLIFIER_RANGE ? "items doing no damage or even heal" : "problems"));
+        }
+
+        if (config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) && from <= -20) {
+            state = ConfigState.WARNING;
+            RogueLikeItems.logger()
+                    .warning("A value for " + config.getVal() + " is set to -20 or less. " +
+                            "This can reduce the health to half a heart");
         }
 
         if (from > to) {
@@ -194,6 +216,9 @@ final public class ConfigUtil {
                 configData.setDamageAmplifierRange(from, to);
                 break;
             }
+            case MAX_HEALTH_AMPLIFIER_RANGE:
+                configData.setMaxHealthAmplifierRange(from, to);
+                break;
         }
     }
 
@@ -223,6 +248,12 @@ final public class ConfigUtil {
                 break;
             case USE_CRAFTING:
                 configData.setUseCrafting(tag);
+                break;
+            case USE_MAX_HEALTH_AMPLIFIER:
+                configData.setUseMaxHealthAmplifier(tag);
+                break;
+            case MAX_HEALTH_ON_TOOLS:
+                configData.setMaxHealthOnTools(tag);
                 break;
         }
     }

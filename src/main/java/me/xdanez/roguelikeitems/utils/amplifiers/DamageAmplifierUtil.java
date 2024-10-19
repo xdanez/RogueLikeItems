@@ -1,10 +1,12 @@
-package me.xdanez.roguelikeitems.utils;
+package me.xdanez.roguelikeitems.utils.amplifiers;
 
 import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.AttackDamage;
 import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
+import me.xdanez.roguelikeitems.utils.LoreUtil;
+import me.xdanez.roguelikeitems.utils.NumberUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Arrow;
@@ -19,10 +21,10 @@ import java.util.concurrent.ThreadLocalRandom;
 final public class DamageAmplifierUtil {
 
     private static final NamespacedKey DAMAGE_AMPLIFIER =
-            new NamespacedKey(RogueLikeItems.getPlugin(RogueLikeItems.class), "damageAmplifier");
+            new NamespacedKey(RogueLikeItems.plugin(), "damageAmplifier");
 
     private static final NamespacedKey ARROW_DAMAGE_AMPLIFIER =
-            new NamespacedKey(RogueLikeItems.getPlugin(RogueLikeItems.class), "arrowDamage");
+            new NamespacedKey(RogueLikeItems.plugin(), "arrowDamage");
 
     public static void setDamageAmplifierData(ItemStack item) {
         ItemMeta meta = item.getItemMeta();

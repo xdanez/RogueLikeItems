@@ -18,6 +18,7 @@ public class ConfigData {
 
     private Pair<Integer, Integer> durabilityRange;
     private Pair<Integer, Integer> damageAmplifierRange;
+    private Pair<Integer, Integer> maxHealthAmplifierRange;
     private List<ItemStack> ignoreItemList;
     private boolean useArmorDamageAmplifier;
     private boolean useNaturalNumbers;
@@ -27,6 +28,33 @@ public class ConfigData {
     private boolean useDamageAmplifier;
     private boolean useVillagerTrades;
     private boolean useCrafting;
+    private boolean useMaxHealthAmplifier;
+
+    public Pair<Integer, Integer> getMaxHealthAmplifierRange() {
+        return maxHealthAmplifierRange;
+    }
+
+    public void setMaxHealthAmplifierRange(int from, int to) {
+        this.maxHealthAmplifierRange = Pair.of(from, to);
+    }
+
+    public boolean useMaxHealthOnTools() {
+        return maxHealthOnTools;
+    }
+
+    public void setMaxHealthOnTools(boolean maxHealthOnTools) {
+        this.maxHealthOnTools = maxHealthOnTools;
+    }
+
+    public boolean useMaxHealthAmplifier() {
+        return useMaxHealthAmplifier;
+    }
+
+    public void setUseMaxHealthAmplifier(boolean useMaxHealthAmplifier) {
+        this.useMaxHealthAmplifier = useMaxHealthAmplifier;
+    }
+
+    private boolean maxHealthOnTools;
 
     public boolean useCrafting() {
         return useCrafting;
