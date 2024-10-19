@@ -11,7 +11,7 @@ use-damage-amplifier: true
 # default: false
 armor-damage-amplifier: false
 
-# ranges for max-health in half hearts
+# range for max-health in half hearts
 # default: [-6, 6]
 max-health-amplifier-range: [-6, 6]
 use-max-health-amplifier: true
