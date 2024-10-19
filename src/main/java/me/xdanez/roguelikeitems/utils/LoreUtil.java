@@ -83,7 +83,7 @@ final public class LoreUtil {
         if (!MaxHealthAmplifierUtil.hasMaxHealthAmplifier(item)) return;
 
         if (amplifier != 0) {
-            lore.add(Component.text((amplifier > 0 ? "+" : "") + amplifier + "HP").decorate(TextDecoration.BOLD)
+            lore.add(Component.text((amplifier > 0 ? "+" : "") + NumberUtil.round((double) amplifier / 2, 1) + " Hearts").decorate(TextDecoration.BOLD)
                     .style(Style.style(TextColor.color(amplifier < 0 ? 255 : 0, amplifier > 0 ? 255 : 0, 0)))
             );
         }
