@@ -4,6 +4,7 @@ import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.Config;
 import me.xdanez.roguelikeitems.enums.ConfigState;
 import me.xdanez.roguelikeitems.enums.ItemType;
+import me.xdanez.roguelikeitems.models.AmplifierChance;
 import me.xdanez.roguelikeitems.models.ConfigData;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -57,6 +58,11 @@ final public class ConfigUtil {
         Pair<ConfigState, Boolean> validMaxHealthOnTool = validateTag(Config.MAX_HEALTH_ON_TOOLS);
         setTag(validMaxHealthOnTool.getRight(), Config.MAX_HEALTH_ON_TOOLS);
 
+        Pair<ConfigState, Integer> validACDurability = validAmplifierChance(Config.AC_DURABILITY);
+        Pair<ConfigState, Integer> validACDamage = validAmplifierChance(Config.AC_DAMAGE);
+        Pair<ConfigState, Integer> validACMaxHealth = validAmplifierChance(Config.AC_MAX_HEALTH);
+        setAmplifierChances(validACDurability.getRight(), validACDamage.getRight(), validACMaxHealth.getRight());
+
         if (validDurabilityRange.getLeft().equals(ConfigState.ERROR)
                 || validDamageAmplifierRange.getLeft().equals(ConfigState.ERROR)
                 || validArmorDamageAmplifierTag.getLeft().equals(ConfigState.ERROR)
@@ -70,7 +76,10 @@ final public class ConfigUtil {
                 || validUseCrafting.getLeft().equals(ConfigState.ERROR)
                 || validMaxHealthAmplifierRange.getLeft().equals(ConfigState.ERROR)
                 || validUseMaxHealthAmplifier.getLeft().equals(ConfigState.ERROR)
-                || validMaxHealthOnTool.getLeft().equals(ConfigState.ERROR)) {
+                || validMaxHealthOnTool.getLeft().equals(ConfigState.ERROR)
+                || validACDamage.getLeft().equals(ConfigState.ERROR)
+                || validACDurability.getLeft().equals(ConfigState.ERROR)
+                || validACMaxHealth.getLeft().equals(ConfigState.ERROR)) {
             return ConfigState.ERROR;
         }
 
@@ -87,7 +96,10 @@ final public class ConfigUtil {
                 || validUseCrafting.getLeft().equals(ConfigState.WARNING)
                 || validMaxHealthAmplifierRange.getLeft().equals(ConfigState.WARNING)
                 || validUseMaxHealthAmplifier.getLeft().equals(ConfigState.WARNING)
-                || validMaxHealthOnTool.getLeft().equals(ConfigState.WARNING)) {
+                || validMaxHealthOnTool.getLeft().equals(ConfigState.WARNING)
+                || validACDamage.getLeft().equals(ConfigState.WARNING)
+                || validACDurability.getLeft().equals(ConfigState.WARNING)
+                || validACMaxHealth.getLeft().equals(ConfigState.WARNING)) {
             return ConfigState.WARNING;
         }
 
@@ -205,6 +217,25 @@ final public class ConfigUtil {
         return Triple.of(state, from, to);
     }
 
+    private static Pair<ConfigState, Integer> validAmplifierChance(Config acConfig) {
+        int chance = RogueLikeItems.defaultConfig().getInt(acConfig.getVal());
+        ConfigState state = ConfigState.SUCCESS;
+
+        try {
+            Object configVal = RogueLikeItems.getConfigVal(acConfig);
+            chance = (int) configVal;
+            if (chance < 0 || chance > 100) {
+                RogueLikeItems.logger().severe(acConfig + " must be a between 0 and 100");
+                return Pair.of(ConfigState.ERROR, 100);
+            }
+        } catch (IllegalArgumentException | ClassCastException | NullPointerException e) {
+            RogueLikeItems.logger().severe(acConfig.getVal() + " has to be a number");
+            return Pair.of(ConfigState.ERROR, chance);
+        }
+
+        return Pair.of(state, chance);
+    }
+
     private static void setRangeValues(int from, int to, Config config) {
         ConfigData configData = ConfigData.getConfigData();
         switch (config) {
@@ -220,6 +251,11 @@ final public class ConfigUtil {
                 configData.setMaxHealthAmplifierRange(from, to);
                 break;
         }
+    }
+
+    private static void setAmplifierChances(int durability, int damage, int maxHealth) {
+        ConfigData configData = ConfigData.getConfigData();
+        configData.setAmplifierChance(new AmplifierChance(durability, damage, maxHealth));
     }
 
     private static void setTag(boolean tag, Config config) {

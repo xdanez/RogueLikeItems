@@ -16,6 +16,13 @@ armor-damage-amplifier: false
 max-health-amplifier-range: [-6, 6]
 use-max-health-amplifier: true
 
+# the chance an amplifier will be applied on an item in percent
+# default for every amplifier: 100
+amplifier-chance:
+  durability: 100
+  damage: 100
+  max-health: 100
+
 # max-health being used on all items
 # default: false
 max-health-tools: false
