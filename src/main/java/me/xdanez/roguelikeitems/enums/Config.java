@@ -14,7 +14,7 @@ public enum Config {
     USE_CRAFTING("use-crafting"),
     MAX_HEALTH_AMPLIFIER_RANGE("max-health-amplifier-range"),
     USE_MAX_HEALTH_AMPLIFIER("use-max-health-amplifier"),
-    MAX_HEALTH_ON_TOOLS("max-health-tools"),
+    MAX_HEALTH_TOOLS("max-health-tools"),
     AMPLIFIER_CHANCE("amplifier-chance"),
     AC_DURABILITY(AMPLIFIER_CHANCE.getVal() + ".durability"),
     AC_DAMAGE(AMPLIFIER_CHANCE.getVal() + ".damage"),

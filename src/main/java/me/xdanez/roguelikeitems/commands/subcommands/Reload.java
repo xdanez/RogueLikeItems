@@ -2,7 +2,6 @@ package me.xdanez.roguelikeitems.commands.subcommands;
 
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.commands.SubCommand;
-import me.xdanez.roguelikeitems.enums.Config;
 import me.xdanez.roguelikeitems.enums.ConfigState;
 import me.xdanez.roguelikeitems.utils.CommandUtil;
 import me.xdanez.roguelikeitems.utils.ConfigUtil;
@@ -12,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Reload extends SubCommand {
@@ -46,33 +46,30 @@ public class Reload extends SubCommand {
         if (!hasPermission) return;
 
         RogueLikeItems.getPlugin(RogueLikeItems.class).reloadConfig();
-        ConfigState validConfig = ConfigUtil.validateConfig();
+        List<ConfigState> validConfig = ConfigUtil.validateConfig();
+        int amtWarning = Collections.frequency(validConfig, ConfigState.WARNING);
+        int amtError = Collections.frequency(validConfig, ConfigState.ERROR);
         if (!(sender instanceof Player)) {
-            switch (validConfig) {
-                case SUCCESS:
-                    RogueLikeItems.logger().info("Config reloaded!");
-                    break;
-                case WARNING:
-                    RogueLikeItems.logger().warning("Config reloaded with warnings");
-                    break;
-                case ERROR:
-                    RogueLikeItems.logger().severe("Config reloaded with errors");
-                    break;
+            if (validConfig.isEmpty() || validConfig.stream().allMatch(ConfigState.SUCCESS::equals)) {
+                RogueLikeItems.logger().info("Config successfully reloaded");
+                return;
             }
+            if (amtError > 0) {
+                RogueLikeItems.logger().severe("Config reloaded with " + amtError + " errors and " + amtWarning + " warnings!");
+                return;
+            }
+            RogueLikeItems.logger().warning("Config reloaded with " + amtWarning + " warnings!");
             return;
         }
 
         Player player = (Player) sender;
-        switch (validConfig) {
-            case SUCCESS:
-                player.sendMessage(Component.text("Config reloaded!").color(TextColor.color(0, 150, 0)));
-                break;
-            case WARNING:
-                player.sendMessage(Component.text("Config reloaded with warnings").color(TextColor.color(147, 150, 17)));
-                break;
-            case ERROR:
-                player.sendMessage(Component.text("Config reloaded with errors").color(TextColor.color(255, 0, 0)));
-                break;
+        if (validConfig.isEmpty() || validConfig.stream().allMatch(ConfigState.SUCCESS::equals)) {
+            player.sendMessage(Component.text("Config successfully reloaded!").color(TextColor.color(0x00ff00)));
+            return;
         }
+        player.sendMessage(
+                Component.text("Config reloaded with " + (amtError > 0 ? amtError + " errors and " : "") + amtWarning + " warnings!")
+                        .color(TextColor.color(amtError > 0 ? 0xff0000 : 0xffff00))
+        );
     }
 }
