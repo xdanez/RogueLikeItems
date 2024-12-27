@@ -24,6 +24,7 @@ final public class AmplifierUtil {
         if (configData.getIgnoreItemList().contains(item)) return;
 
         if (configData.useMaxHealthAmplifier()
+                && !((ItemType.isTool(material) || ItemType.isWeapon(material)) && !configData.useMaxHealthOnTools())
                 && amplifierChance.getMaxHealth() >= ThreadLocalRandom.current().nextInt(100 + 1))
             MaxHealthAmplifierUtil.setMaxHealthData(item);
 
@@ -32,6 +33,7 @@ final public class AmplifierUtil {
             DurabilityAmplifierUtil.setDurabilityData(item);
 
         if (configData.useDamageAmplifier() && !ItemType.hasNoDamage(material)
-                && amplifierChance.getDamage() >= ThreadLocalRandom.current().nextInt(100 + 1)) DamageAmplifierUtil.setDamageAmplifierData(item);
+                && amplifierChance.getDamage() >= ThreadLocalRandom.current().nextInt(100 + 1))
+            DamageAmplifierUtil.setDamageAmplifierData(item);
     }
 }
