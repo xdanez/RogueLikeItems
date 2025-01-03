@@ -2,10 +2,8 @@ package me.xdanez.roguelikeitems.utils.amplifiers;
 
 import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.RogueLikeItems;
-import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.utils.LoreUtil;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -22,10 +20,7 @@ final public class MaxHealthAmplifierUtil {
 
     public static void setMaxHealthData(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        Material material = item.getType();
         ConfigData config = ConfigData.getConfigData();
-
-        if ((ItemType.isTool(material) || ItemType.isWeapon(material)) && !config.useMaxHealthOnTools()) return;
 
         Pair<Integer, Integer> range = config.getMaxHealthAmplifierRange();
 

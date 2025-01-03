@@ -4,9 +4,8 @@ import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.Config;
 import me.xdanez.roguelikeitems.enums.ConfigState;
 import me.xdanez.roguelikeitems.enums.ItemType;
+import me.xdanez.roguelikeitems.models.AmplifierChance;
 import me.xdanez.roguelikeitems.models.ConfigData;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,100 +13,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 final public class ConfigUtil {
-    public static ConfigState validateConfig() {
-        Triple<ConfigState, Integer, Integer> validDurabilityRange = validRange(Config.DURABILITY_AMPLIFIER_RANGE);
-        setRangeValues(validDurabilityRange.getMiddle(), validDurabilityRange.getRight(), Config.DURABILITY_AMPLIFIER_RANGE);
+    final static Config[] ranges = new Config[]{
+            Config.DURABILITY_AMPLIFIER_RANGE,
+            Config.DAMAGE_AMPLIFIER_RANGE,
+            Config.MAX_HEALTH_AMPLIFIER_RANGE
+    };
 
-        Triple<ConfigState, Integer, Integer> validDamageAmplifierRange = validRange(Config.DAMAGE_AMPLIFIER_RANGE);
-        setRangeValues(validDamageAmplifierRange.getMiddle(), validDamageAmplifierRange.getRight(), Config.DAMAGE_AMPLIFIER_RANGE);
+    final static Config[] tags = new Config[]{
+            Config.USE_DURABILITY_AMPLIFIER,
+            Config.USE_DAMAGE_AMPLIFIER,
+            Config.USE_MAX_HEALTH_AMPLIFIER,
+            Config.MAX_HEALTH_TOOLS,
+            Config.NATURAL_NUMBERS,
+            Config.USE_LOOT_TABLES,
+            Config.USE_MOB_DROPS,
+            Config.USE_VILLAGER_TRADES,
+            Config.USE_CRAFTING
+    };
 
-        Triple<ConfigState, Integer, Integer> validMaxHealthAmplifierRange = validRange(Config.MAX_HEALTH_AMPLIFIER_RANGE);
-        setRangeValues(validMaxHealthAmplifierRange.getMiddle(), validMaxHealthAmplifierRange.getRight(), Config.MAX_HEALTH_AMPLIFIER_RANGE);
+    final static Config[] amplifierChances = new Config[]{
+            Config.AC_DURABILITY,
+            Config.AC_DAMAGE,
+            Config.AC_MAX_HEALTH
+    };
 
-        Pair<ConfigState, Boolean> validArmorDamageAmplifierTag = validateTag(Config.ARMOR_DAMAGE_AMPLIFIER);
-        setTag(validArmorDamageAmplifierTag.getRight(), Config.ARMOR_DAMAGE_AMPLIFIER);
+    static List<ConfigState> states = new ArrayList<>();
 
-        Pair<ConfigState, Boolean> validNaturalNumbersTag = validateTag(Config.NATURAL_NUMBERS);
-        setTag(validNaturalNumbersTag.getRight(), Config.NATURAL_NUMBERS);
-
-        Pair<ConfigState, Boolean> validUseLootTables = validateTag(Config.USE_LOOT_TABLES);
-        setTag(validUseLootTables.getRight(), Config.USE_LOOT_TABLES);
-
-        Pair<ConfigState, Boolean> validUseMobDrops = validateTag(Config.USE_MOB_DROPS);
-        setTag(validUseMobDrops.getRight(), Config.USE_MOB_DROPS);
-
-        Pair<ConfigState, Boolean> validUseDurabilityAmplifier = validateTag(Config.USE_DURABILITY_AMPLIFIER);
-        setTag(validUseDurabilityAmplifier.getRight(), Config.USE_DURABILITY_AMPLIFIER);
-
-        Pair<ConfigState, Boolean> validUseDamageAmplifier = validateTag(Config.USE_DAMAGE_AMPLIFIER);
-        setTag(validUseDamageAmplifier.getRight(), Config.USE_DAMAGE_AMPLIFIER);
-
-        Pair<ConfigState, Boolean> validUseVillagerTrades = validateTag(Config.USE_VILLAGER_TRADES);
-        setTag(validUseVillagerTrades.getRight(), Config.USE_VILLAGER_TRADES);
-
-        Pair<ConfigState, Boolean> validUseCrafting = validateTag(Config.USE_CRAFTING);
-        setTag(validUseCrafting.getRight(), Config.USE_CRAFTING);
-
-        Pair<ConfigState, List<ItemStack>> validIgnoreList = validIgnoreList();
-        ConfigData.getConfigData().setIgnoreItemList(validIgnoreList.getRight());
-
-        Pair<ConfigState, Boolean> validUseMaxHealthAmplifier = validateTag(Config.USE_MAX_HEALTH_AMPLIFIER);
-        setTag(validUseMaxHealthAmplifier.getRight(), Config.USE_MAX_HEALTH_AMPLIFIER);
-
-        Pair<ConfigState, Boolean> validMaxHealthOnTool = validateTag(Config.MAX_HEALTH_ON_TOOLS);
-        setTag(validMaxHealthOnTool.getRight(), Config.MAX_HEALTH_ON_TOOLS);
-
-        if (validDurabilityRange.getLeft().equals(ConfigState.ERROR)
-                || validDamageAmplifierRange.getLeft().equals(ConfigState.ERROR)
-                || validArmorDamageAmplifierTag.getLeft().equals(ConfigState.ERROR)
-                || validNaturalNumbersTag.getLeft().equals(ConfigState.ERROR)
-                || validUseLootTables.getLeft().equals(ConfigState.ERROR)
-                || validUseMobDrops.getLeft().equals(ConfigState.ERROR)
-                || validUseDamageAmplifier.getLeft().equals(ConfigState.ERROR)
-                || validUseDurabilityAmplifier.getLeft().equals(ConfigState.ERROR)
-                || validUseVillagerTrades.getLeft().equals(ConfigState.ERROR)
-                || validIgnoreList.getLeft().equals(ConfigState.ERROR)
-                || validUseCrafting.getLeft().equals(ConfigState.ERROR)
-                || validMaxHealthAmplifierRange.getLeft().equals(ConfigState.ERROR)
-                || validUseMaxHealthAmplifier.getLeft().equals(ConfigState.ERROR)
-                || validMaxHealthOnTool.getLeft().equals(ConfigState.ERROR)) {
-            return ConfigState.ERROR;
-        }
-
-        if (validDurabilityRange.getLeft().equals(ConfigState.WARNING)
-                || validDamageAmplifierRange.getLeft().equals(ConfigState.WARNING)
-                || validDurabilityRange.getLeft().equals(ConfigState.WARNING)
-                || validNaturalNumbersTag.getLeft().equals(ConfigState.WARNING)
-                || validUseLootTables.getLeft().equals(ConfigState.WARNING)
-                || validUseMobDrops.getLeft().equals(ConfigState.WARNING)
-                || validUseDamageAmplifier.getLeft().equals(ConfigState.WARNING)
-                || validUseDurabilityAmplifier.getLeft().equals(ConfigState.WARNING)
-                || validUseVillagerTrades.getLeft().equals(ConfigState.WARNING)
-                || validIgnoreList.getLeft().equals(ConfigState.WARNING)
-                || validUseCrafting.getLeft().equals(ConfigState.WARNING)
-                || validMaxHealthAmplifierRange.getLeft().equals(ConfigState.WARNING)
-                || validUseMaxHealthAmplifier.getLeft().equals(ConfigState.WARNING)
-                || validMaxHealthOnTool.getLeft().equals(ConfigState.WARNING)) {
-            return ConfigState.WARNING;
-        }
-
-        return ConfigState.SUCCESS;
+    public static List<ConfigState> validateConfig() {
+        states.clear();
+        validateRanges();
+        validateTags();
+        validateIgnoreList();
+        validateAmplifierChances();
+        return states;
     }
 
-    private static Pair<ConfigState, List<ItemStack>> validIgnoreList() {
+    private static void validateIgnoreList() {
         ArrayList<ItemStack> ignoreItemsList = new ArrayList<>();
-        ConfigState state = ConfigState.SUCCESS;
         try {
             Object configVal = RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS);
             if (!(configVal instanceof List)) {
                 RogueLikeItems.logger().severe(Config.IGNORE_ITEMS.getVal() + " wrongfully declared");
-                return Pair.of(ConfigState.ERROR, List.of());
+                states.add(ConfigState.ERROR);
+                setIgnoreList(ignoreItemsList);
+                return;
             }
 
             List<?> ignoreItemsListConfig = (List<?>) configVal;
 
             if (ignoreItemsListConfig.isEmpty()) {
-                return Pair.of(state, ignoreItemsList);
+                setIgnoreList(ignoreItemsList);
+                return;
             }
             for (Object item : ignoreItemsListConfig) {
                 String materialString =
@@ -118,91 +74,123 @@ final public class ConfigUtil {
                 try {
                     Material material = Material.valueOf(materialString);
                     if (!ItemType.isModifiable(material)) {
+                        states.add(ConfigState.WARNING);
                         RogueLikeItems.logger().warning(item + " is not modifiable");
-                        state = ConfigState.WARNING;
                         continue;
                     }
                     ignoreItemsList.add(new ItemStack(material));
                 } catch (IllegalArgumentException e) {
+                    states.add(ConfigState.WARNING);
                     RogueLikeItems.logger().warning(item + " is not a valid item");
-                    state = ConfigState.WARNING;
                 }
             }
         } catch (IllegalArgumentException e) {
+            states.add(ConfigState.WARNING);
             RogueLikeItems.logger().severe(Config.IGNORE_ITEMS.getVal() + " wrongfully declared");
-            return Pair.of(ConfigState.ERROR, ignoreItemsList);
+            return;
         }
-        return Pair.of(state, ignoreItemsList);
+        setIgnoreList(ignoreItemsList);
     }
 
-    private static Pair<ConfigState, Boolean> validateTag(Config config) {
-        boolean tag = RogueLikeItems.defaultConfig().getBoolean(config.getVal());
-        try {
-            Object configVal = RogueLikeItems.getConfigVal(config);
-            if (!configVal.toString().equalsIgnoreCase("true")
-                    && !configVal.toString().equalsIgnoreCase("false")) {
-                RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared. Using default value");
-                return Pair.of(ConfigState.ERROR, tag);
-            }
-            tag = Boolean.parseBoolean(configVal.toString().trim());
-        } catch (IllegalArgumentException e) {
-            RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared. Using default value");
-            return Pair.of(ConfigState.ERROR, tag);
-        }
-
-        return Pair.of(ConfigState.SUCCESS, tag);
-    }
-
-    private static Triple<ConfigState, Integer, Integer> validRange(Config config) {
-        List<Integer> defaultRange = RogueLikeItems.defaultConfig().getIntegerList(config.getVal());
-        ConfigState state = ConfigState.SUCCESS;
-        int from = defaultRange.get(0);
-        int to = defaultRange.get(1);
-        try {
-            Object configVal = RogueLikeItems.getConfigVal(config);
-            if (configVal instanceof List<?>) {
-                List<?> range = (List<?>) configVal;
-                if (range.isEmpty()) {
-                    state = ConfigState.WARNING;
-                    RogueLikeItems.logger().warning(config.getVal() + " is empty. Using default values.");
-                    return Triple.of(state, from, to);
+    private static void validateTags() {
+        for (Config config : ConfigUtil.tags) {
+            boolean tag = RogueLikeItems.defaultConfig().getBoolean(config.getVal());
+            try {
+                Object configVal = RogueLikeItems.getConfigVal(config);
+                if (!configVal.toString().equalsIgnoreCase("true")
+                        && !configVal.toString().equalsIgnoreCase("false")) {
+                    RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared. Using default value");
+                    setTag(tag, config);
+                    states.add(ConfigState.ERROR);
+                    continue;
                 }
-                from = Integer.parseInt(range.get(0).toString());
-                to = Integer.parseInt(range.get(1).toString());
-            } else {
-                int value = Integer.parseInt(configVal.toString());
-                from = value;
-                to = value;
+                tag = Boolean.parseBoolean(configVal.toString().trim());
+                setTag(tag, config);
+            } catch (IllegalArgumentException e) {
+                RogueLikeItems.logger().severe(config.getVal() + " tag wrongfully declared. Using default value");
+                states.add(ConfigState.ERROR);
             }
-        } catch (IllegalArgumentException | ClassCastException e) {
-            state = ConfigState.ERROR;
-            RogueLikeItems.logger().severe(config.getVal() + " wrongfully declared. Using default values");
-
-            return Triple.of(state, from, to);
         }
+    }
 
-        if (!config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) && from <= -100) {
-            state = ConfigState.WARNING;
-            RogueLikeItems.logger()
-                    .warning("A value for " + config.getVal() + " is set to -100 or less. "
-                            + "This can lead to " +
-                            (config == Config.DURABILITY_AMPLIFIER_RANGE ? "items having no durability"
-                                    : config == Config.DAMAGE_AMPLIFIER_RANGE ? "items doing no damage or even heal" : "problems"));
+    private static void validateRanges() {
+        for (Config config : ConfigUtil.ranges) {
+            List<Integer> defaultRange = RogueLikeItems.defaultConfig().getIntegerList(config.getVal());
+            int from = defaultRange.get(0);
+            int to = defaultRange.get(1);
+            try {
+                Object configVal = RogueLikeItems.getConfigVal(config);
+                if (configVal instanceof List<?>) {
+                    List<?> range = (List<?>) configVal;
+                    if (range.isEmpty()) {
+                        states.add(ConfigState.WARNING);
+                        RogueLikeItems.logger().warning(config.getVal() + " is empty. Using default values.");
+                        setRangeValues(from, to, config);
+                        continue;
+                    }
+                    from = Integer.parseInt(range.get(0).toString());
+                    to = Integer.parseInt(range.get(1).toString());
+                } else {
+                    int value = Integer.parseInt(configVal.toString());
+                    from = value;
+                    to = value;
+                }
+            } catch (IllegalArgumentException | ClassCastException e) {
+                states.add(ConfigState.ERROR);
+                RogueLikeItems.logger().severe(config.getVal() + " wrongfully declared. Using default values");
+                setRangeValues(from, to, config);
+                continue;
+            }
+
+            if (!config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) && from <= -100) {
+                RogueLikeItems.logger()
+                        .warning("A value for " + config.getVal() + " is set to -100 or less. "
+                                + "This can lead to " +
+                                (config == Config.DURABILITY_AMPLIFIER_RANGE ? "items having no durability"
+                                        : config == Config.DAMAGE_AMPLIFIER_RANGE ? "items doing no damage or even heal" : "problems"));
+            }
+
+            if (config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) && from <= -20) {
+                states.add(ConfigState.WARNING);
+                RogueLikeItems.logger()
+                        .warning("A value for " + config.getVal() + " is set to -20 or less. " +
+                                "This can reduce the health to half a heart");
+            }
+
+            if (from > to) {
+                states.add(ConfigState.WARNING);
+                RogueLikeItems.logger().warning(config.getVal() + " not in correct order");
+                setRangeValues(to, from, config);
+            }
+            setRangeValues(from, to, config);
         }
+    }
 
-        if (config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) && from <= -20) {
-            state = ConfigState.WARNING;
-            RogueLikeItems.logger()
-                    .warning("A value for " + config.getVal() + " is set to -20 or less. " +
-                            "This can reduce the health to half a heart");
+    private static void validateAmplifierChances() {
+        AmplifierChance amplifierChance = new AmplifierChance(100, 100, 100);
+
+        for (Config acConfig : amplifierChances) {
+            int defaultChance = RogueLikeItems.defaultConfig().getInt(acConfig.getVal());
+            int chance;
+
+            try {
+                Object configVal = RogueLikeItems.getConfigVal(acConfig);
+                chance = (int) configVal;
+                if (chance < 0 || chance > 100) {
+                    RogueLikeItems.logger().severe(acConfig + " must be a between 0 and 100");
+                    states.add(ConfigState.ERROR);
+                    amplifierChance.setAmplifierChance(acConfig, defaultChance);
+                    return;
+                }
+                amplifierChance.setAmplifierChance(acConfig, chance);
+            } catch (IllegalArgumentException | ClassCastException | NullPointerException e) {
+                states.add(ConfigState.ERROR);
+                RogueLikeItems.logger().severe(acConfig.getVal() + " must be a number");
+                amplifierChance.setAmplifierChance(acConfig, defaultChance);
+                return;
+            }
         }
-
-        if (from > to) {
-            RogueLikeItems.logger().warning(config.getVal() + " not in correct order");
-            return Triple.of(ConfigState.WARNING, to, from);
-        }
-
-        return Triple.of(state, from, to);
+        setAmplifierChances(amplifierChance);
     }
 
     private static void setRangeValues(int from, int to, Config config) {
@@ -220,6 +208,16 @@ final public class ConfigUtil {
                 configData.setMaxHealthAmplifierRange(from, to);
                 break;
         }
+    }
+
+    private static void setAmplifierChances(AmplifierChance amplifierChance) {
+        ConfigData configData = ConfigData.getConfigData();
+        configData.setAmplifierChance(amplifierChance);
+    }
+
+    private static void setIgnoreList(List<ItemStack> items) {
+        ConfigData configData = ConfigData.getConfigData();
+        configData.setIgnoreItemList(items);
     }
 
     private static void setTag(boolean tag, Config config) {
@@ -252,7 +250,7 @@ final public class ConfigUtil {
             case USE_MAX_HEALTH_AMPLIFIER:
                 configData.setUseMaxHealthAmplifier(tag);
                 break;
-            case MAX_HEALTH_ON_TOOLS:
+            case MAX_HEALTH_TOOLS:
                 configData.setMaxHealthOnTools(tag);
                 break;
         }

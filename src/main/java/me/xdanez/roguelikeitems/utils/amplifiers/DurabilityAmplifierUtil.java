@@ -24,7 +24,6 @@ final public class DurabilityAmplifierUtil {
     private static final NamespacedKey key = new NamespacedKey(RogueLikeItems.plugin(), "durability");
 
     public static void setDurabilityData(ItemStack item) {
-
         ConfigData config = ConfigData.getConfigData();
         Pair<Integer, Integer> range = config.getDurabilityRange();
         boolean naturalNumbers = config.useNaturalNumbers();

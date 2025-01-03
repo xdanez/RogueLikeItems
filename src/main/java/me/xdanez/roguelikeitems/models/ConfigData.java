@@ -29,6 +29,15 @@ public class ConfigData {
     private boolean useVillagerTrades;
     private boolean useCrafting;
     private boolean useMaxHealthAmplifier;
+    private AmplifierChance amplifierChance;
+
+    public AmplifierChance getAmplifierChance() {
+        return amplifierChance;
+    }
+
+    public void setAmplifierChance(AmplifierChance amplifierChance) {
+        this.amplifierChance = amplifierChance;
+    }
 
     public Pair<Integer, Integer> getMaxHealthAmplifierRange() {
         return maxHealthAmplifierRange;
