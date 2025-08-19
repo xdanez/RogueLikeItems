@@ -38,7 +38,7 @@ public class PlayerChangeEquipmentListener implements Listener {
         ItemStack offHand = inventory.getItemInOffHand();
         ItemStack[] armor = inventory.getArmorContents();
 
-        AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
         if (maxHealth == null) return;
         maxHealth.setBaseValue(maxHealth.getDefaultValue());
         for (ItemStack piece : armor) {
