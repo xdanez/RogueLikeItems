@@ -1,6 +1,7 @@
 package me.xdanez.roguelikeitems.models;
 
 import it.unimi.dsi.fastutil.Pair;
+import me.xdanez.roguelikeitems.enums.Config;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -30,6 +31,19 @@ public class ConfigData {
     private boolean useCrafting;
     private boolean useMaxHealthAmplifier;
     private AmplifierChance amplifierChance;
+
+    public Pair<Integer, Integer> getRange(Config config) {
+        switch (config) {
+            case DAMAGE_AMPLIFIER_RANGE:
+                return getDamageAmplifierRange();
+            case MAX_HEALTH_AMPLIFIER_RANGE:
+                return getMaxHealthAmplifierRange();
+            case DURABILITY_AMPLIFIER_RANGE:
+                return getDurabilityRange();
+            default:
+                throw new IllegalArgumentException("Selected config is no range");
+        }
+    }
 
     public AmplifierChance getAmplifierChance() {
         return amplifierChance;

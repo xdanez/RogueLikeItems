@@ -1,58 +1,37 @@
 package me.xdanez.roguelikeitems.listeners;
 
-import me.xdanez.roguelikeitems.enums.AttackDamage;
-import me.xdanez.roguelikeitems.models.Durability;
-import me.xdanez.roguelikeitems.models.DurabilityDataType;
-import me.xdanez.roguelikeitems.utils.amplifiers.DamageAmplifierUtil;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import me.xdanez.roguelikeitems.enums.ItemType;
+import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
-import me.xdanez.roguelikeitems.utils.LoreUtil;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
 
 public class PlayerPrepareSmithingTableListener implements Listener {
 
     @EventHandler
     public void onPlayerPrepareSmithingTable(PrepareSmithingEvent e) {
-        ItemStack smithedItem = e.getResult();
-        if (smithedItem == null) return;
+        ItemStack input = e.getInventory().getInputEquipment();
+        if (input == null) return;
 
-        ItemStack inputEquipment = e.getInventory().getInputEquipment();
-        if (inputEquipment == null) return;
+        ItemStack result = e.getResult();
+        if (result == null) return;
 
-        ItemMeta smithedItemMeta = smithedItem.getItemMeta();
+        double durabilityAmplifier = DurabilityAmplifierUtil.getAmplifier(input);
 
-        Material siMaterial = smithedItem.getType();
-        Damageable siDmg = (Damageable) smithedItemMeta;
+        result.lore(null);
 
-        if (DurabilityAmplifierUtil.hasDurabilityData(inputEquipment)) {
-            double amplifier = DurabilityAmplifierUtil.getAmplifier(inputEquipment);
+        if (durabilityAmplifier != 0)
+            DurabilityAmplifierUtil.setDurabilityData(result, Math.round(durabilityAmplifier * 100.0) / 100.0);
 
-            int siMaxDurability = siMaterial.getMaxDurability();
-            int siCurrentDurability = siMaxDurability - siDmg.getDamage();
-
-            double siDurabilityLeftPercentage = (double) siCurrentDurability / siMaxDurability;
-            int siAmplifiedDurability = (int) (siMaxDurability + siMaxDurability * amplifier / 100);
-            int siNewDurabilityLeft = (int) (siAmplifiedDurability * siDurabilityLeftPercentage);
-
-            PersistentDataContainer container = smithedItemMeta.getPersistentDataContainer();
-            container.set(DurabilityAmplifierUtil.getKey(),new DurabilityDataType(),
-                    new Durability(siAmplifiedDurability, amplifier, siNewDurabilityLeft)
-            );
-            LoreUtil.clearLore(smithedItemMeta);
-            LoreUtil.setDurabilityLore(smithedItem);
+        boolean isArmor = ItemType.isArmor(result.getType());
+        if (!isArmor) {
+            ItemAttributeModifiers.Builder attributes = AttributeModifiersAmplifierUtil.getAttributeModifiersNetherite(input, result);
+            result.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes.build());
         }
-
-        if (DamageAmplifierUtil.hasDamageAmplifier(inputEquipment)) {
-            double attackDamage = AttackDamage.getDamageFromMaterial(siMaterial);
-            LoreUtil.setDamageAmplifierLore(smithedItem, attackDamage, siMaterial);
-        }
-        smithedItem.setItemMeta(smithedItemMeta);
     }
 
 }

@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 final public class ConfigUtil {
     final static Config[] ranges = new Config[]{
@@ -38,6 +39,26 @@ final public class ConfigUtil {
     };
 
     static List<ConfigState> states = new ArrayList<>();
+
+    public static boolean useAmplifier(Config config) {
+        ConfigData configData = ConfigData.getConfigData();
+        AmplifierChance chance = configData.getAmplifierChance();
+        int chanceValue = ThreadLocalRandom.current().nextInt(100 + 1);
+
+        switch (config) {
+            case USE_DURABILITY_AMPLIFIER:
+            case DURABILITY_AMPLIFIER_RANGE:
+                return configData.useDurabilityAmplifier() && chance.getDurability() >= chanceValue;
+            case USE_MAX_HEALTH_AMPLIFIER:
+            case MAX_HEALTH_AMPLIFIER_RANGE:
+                return configData.useMaxHealthAmplifier() && chance.getMaxHealth() >= chanceValue;
+            case USE_DAMAGE_AMPLIFIER:
+            case DAMAGE_AMPLIFIER_RANGE:
+                return configData.useDamageAmplifier() && chance.getDamage() >= chanceValue;
+            default:
+                throw new IllegalArgumentException("Given Config is no amplifier");
+        }
+    }
 
     public static List<ConfigState> validateConfig() {
         states.clear();
