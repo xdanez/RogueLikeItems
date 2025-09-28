@@ -16,16 +16,17 @@ public enum Config {
     USE_MAX_HEALTH_AMPLIFIER("use-max-health-amplifier"),
     MAX_HEALTH_TOOLS("max-health-tools"),
     AMPLIFIER_CHANCE("amplifier-chance"),
-    AC_DURABILITY(AMPLIFIER_CHANCE.getVal() + ".durability"),
-    AC_DAMAGE(AMPLIFIER_CHANCE.getVal() + ".damage"),
-    AC_MAX_HEALTH(AMPLIFIER_CHANCE.getVal() + ".max-health");
+    AC_DURABILITY(AMPLIFIER_CHANCE + ".durability"),
+    AC_DAMAGE(AMPLIFIER_CHANCE + ".damage"),
+    AC_MAX_HEALTH(AMPLIFIER_CHANCE + ".max-health");
 
     private final String val;
     Config(String val) {
         this.val = val;
     }
 
-    public String getVal() {
+    @Override
+    public String toString() {
         return val;
     }
 }

@@ -1,6 +1,7 @@
 package me.xdanez.roguelikeitems.models;
 
 import it.unimi.dsi.fastutil.Pair;
+import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.Config;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,16 +22,6 @@ public class ConfigData {
     private Pair<Integer, Integer> damageAmplifierRange;
     private Pair<Integer, Integer> maxHealthAmplifierRange;
     private List<ItemStack> ignoreItemList;
-    private boolean useArmorDamageAmplifier;
-    private boolean useNaturalNumbers;
-    private boolean useLootTables;
-    private boolean useMobDrops;
-    private boolean useDurabilityAmplifier;
-    private boolean useDamageAmplifier;
-    private boolean useVillagerTrades;
-    private boolean useCrafting;
-    private boolean useMaxHealthAmplifier;
-    private AmplifierChance amplifierChance;
 
     public Pair<Integer, Integer> getRange(Config config) {
         switch (config) {
@@ -41,16 +32,21 @@ public class ConfigData {
             case DURABILITY_AMPLIFIER_RANGE:
                 return getDurabilityRange();
             default:
-                throw new IllegalArgumentException("Selected config is no range");
+                throw new IllegalArgumentException("Given config is no range");
         }
     }
 
-    public AmplifierChance getAmplifierChance() {
-        return amplifierChance;
-    }
-
-    public void setAmplifierChance(AmplifierChance amplifierChance) {
-        this.amplifierChance = amplifierChance;
+    public int getAmplifierChance(Config config) {
+        switch (config) {
+            case AC_DAMAGE:
+                return RogueLikeItems.config().getInt(Config.AC_DAMAGE.toString());
+            case AC_MAX_HEALTH:
+                return RogueLikeItems.config().getInt(Config.AC_MAX_HEALTH.toString());
+            case AC_DURABILITY:
+                return RogueLikeItems.config().getInt(Config.AC_DURABILITY.toString());
+            default:
+                throw new IllegalArgumentException("Given config is no amplifier chance");
+        }
     }
 
     public Pair<Integer, Integer> getMaxHealthAmplifierRange() {
@@ -62,37 +58,19 @@ public class ConfigData {
     }
 
     public boolean useMaxHealthOnTools() {
-        return maxHealthOnTools;
-    }
-
-    public void setMaxHealthOnTools(boolean maxHealthOnTools) {
-        this.maxHealthOnTools = maxHealthOnTools;
+        return RogueLikeItems.config().getBoolean(Config.MAX_HEALTH_TOOLS.toString());
     }
 
     public boolean useMaxHealthAmplifier() {
-        return useMaxHealthAmplifier;
+        return RogueLikeItems.config().getBoolean(Config.USE_MAX_HEALTH_AMPLIFIER.toString());
     }
-
-    public void setUseMaxHealthAmplifier(boolean useMaxHealthAmplifier) {
-        this.useMaxHealthAmplifier = useMaxHealthAmplifier;
-    }
-
-    private boolean maxHealthOnTools;
 
     public boolean useCrafting() {
-        return useCrafting;
-    }
-
-    public void setUseCrafting(boolean useCrafting) {
-        this.useCrafting = useCrafting;
+        return RogueLikeItems.config().getBoolean(Config.USE_CRAFTING.toString());
     }
 
     public boolean useVillagerTrades() {
-        return useVillagerTrades;
-    }
-
-    public void setUseVillagerTrades(boolean useVillagerTrades) {
-        this.useVillagerTrades = useVillagerTrades;
+        return RogueLikeItems.config().getBoolean(Config.USE_VILLAGER_TRADES.toString());
     }
 
     public Pair<Integer, Integer> getDurabilityRange() {
@@ -112,51 +90,27 @@ public class ConfigData {
     }
 
     public boolean useArmorDamageAmplifier() {
-        return useArmorDamageAmplifier;
-    }
-
-    public void setUseArmorDamageAmplifier(boolean useArmorDamageAmplifier) {
-        this.useArmorDamageAmplifier = useArmorDamageAmplifier;
+        return RogueLikeItems.config().getBoolean(Config.ARMOR_DAMAGE_AMPLIFIER.toString());
     }
 
     public boolean useNaturalNumbers() {
-        return useNaturalNumbers;
-    }
-
-    public void setUseNaturalNumbers(boolean useNaturalNumbers) {
-        this.useNaturalNumbers = useNaturalNumbers;
+        return RogueLikeItems.config().getBoolean(Config.NATURAL_NUMBERS.toString());
     }
 
     public boolean useLootTables() {
-        return useLootTables;
-    }
-
-    public void setUseLootTables(boolean useLootTables) {
-        this.useLootTables = useLootTables;
+        return RogueLikeItems.config().getBoolean(Config.USE_LOOT_TABLES.toString());
     }
 
     public boolean useMobDrops() {
-        return useMobDrops;
-    }
-
-    public void setUseMobDrops(boolean useMobDrops) {
-        this.useMobDrops = useMobDrops;
+        return RogueLikeItems.config().getBoolean(Config.USE_MOB_DROPS.toString());
     }
 
     public boolean useDurabilityAmplifier() {
-        return useDurabilityAmplifier;
-    }
-
-    public void setUseDurabilityAmplifier(boolean useDurabilityAmplifier) {
-        this.useDurabilityAmplifier = useDurabilityAmplifier;
+        return RogueLikeItems.config().getBoolean(Config.USE_DURABILITY_AMPLIFIER.toString());
     }
 
     public boolean useDamageAmplifier() {
-        return useDamageAmplifier;
-    }
-
-    public void setUseDamageAmplifier(boolean useDamageAmplifier) {
-        this.useDamageAmplifier = useDamageAmplifier;
+        return RogueLikeItems.config().getBoolean(Config.USE_DAMAGE_AMPLIFIER.toString());
     }
 
     public List<ItemStack> getIgnoreItemList() {

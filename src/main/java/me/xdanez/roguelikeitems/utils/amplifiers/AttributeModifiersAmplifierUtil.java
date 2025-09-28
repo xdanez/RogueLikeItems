@@ -24,10 +24,10 @@ import org.bukkit.persistence.PersistentDataType;
 final public class AttributeModifiersAmplifierUtil {
 
     public static final NamespacedKey DAMAGE_AMPLIFIER =
-            new NamespacedKey(RogueLikeItems.plugin(), "damageAmplifier");
+            new NamespacedKey(RogueLikeItems.plugin, "damageAmplifier");
 
     private static final NamespacedKey MAX_HEALTH_AMPLIFIER =
-            new NamespacedKey(RogueLikeItems.plugin(), "maxHealthAmplifier");
+            new NamespacedKey(RogueLikeItems.plugin, "maxHealthAmplifier");
 
     public static void setAmplifiers(ItemStack item) {
         ConfigData config = ConfigData.getConfigData();
@@ -77,7 +77,7 @@ final public class AttributeModifiersAmplifierUtil {
             }
         }
 
-        if (useMaxHealth) {
+        if (useMaxHealth && (isArmor || isShield || config.useMaxHealthOnTools())) {
             modifiedAttributes.addModifier(Attribute.MAX_HEALTH,
                     new AttributeModifier(MAX_HEALTH_AMPLIFIER,
                             maxHealthAmplifier,

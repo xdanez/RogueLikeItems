@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 */
 public final class RogueLikeItems extends JavaPlugin {
 
-    static RogueLikeItems plugin;
+    public static RogueLikeItems plugin;
 
     @Override
     public void onEnable() {
@@ -48,16 +48,16 @@ public final class RogueLikeItems extends JavaPlugin {
         return plugin.getLogger();
     }
 
-    public static RogueLikeItems plugin() {
-        return getPlugin(RogueLikeItems.class);
+    public static Configuration defaultConfig() {
+        return plugin.getConfig().getDefaults();
     }
 
-    public static Configuration defaultConfig() {
-        return plugin().getConfig().getDefaults();
+    public static Configuration config() {
+        return plugin.getConfig();
     }
 
     public static Object getConfigVal(Config config) {
-        return plugin.getConfig().get(config.getVal());
+        return plugin.getConfig().get(config.toString());
     }
 
     public static Configuration getPluginYML() {
