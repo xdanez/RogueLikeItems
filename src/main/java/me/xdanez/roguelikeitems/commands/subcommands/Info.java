@@ -26,7 +26,7 @@ public class Info extends SubCommand {
 
     @Override
     public String getDescription() {
-        return "Info about plugin";
+        return "Show info about plugin";
     }
 
     @Override

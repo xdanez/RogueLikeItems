@@ -31,7 +31,7 @@ public class Give extends SubCommand {
 
     @Override
     public String getDescription() {
-        return "Give an item to a player";
+        return "Give an item with random modifiers to a player";
     }
 
     @Override
