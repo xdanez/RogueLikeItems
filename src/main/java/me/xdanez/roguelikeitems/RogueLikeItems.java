@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 */
 public final class RogueLikeItems extends JavaPlugin {
 
-    static RogueLikeItems plugin;
+    public static RogueLikeItems plugin;
 
     @Override
     public void onEnable() {
@@ -29,18 +29,13 @@ public final class RogueLikeItems extends JavaPlugin {
         ConfigUtil.validateConfig();
 
         getServer().getPluginManager().registerEvents(new PlayerCraftListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerDamagesItemListener(), this);
-        getServer().getPluginManager().registerEvents(new DamageDealtListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerPrepareSmithingTableListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerShootsBowListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerPrepareCraftListener(), this);
         getServer().getPluginManager().registerEvents(new LootGenerateListener(), this);
         getServer().getPluginManager().registerEvents(new MobDeathListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerMendingListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerPrepareAnvilListener(), this);
         getServer().getPluginManager().registerEvents(new VillagerAcquireTradeListener(), this);
         getServer().getPluginManager().registerEvents(new ItemInItemFrameSpawnListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerChangeEquipmentListener(), this);
 
         Objects.requireNonNull(getCommand("rli")).setExecutor(new RLI());
     }
@@ -53,20 +48,16 @@ public final class RogueLikeItems extends JavaPlugin {
         return plugin.getLogger();
     }
 
-    public static RogueLikeItems plugin() {
-        return getPlugin(RogueLikeItems.class);
+    public static Configuration defaultConfig() {
+        return plugin.getConfig().getDefaults();
     }
 
     public static Configuration config() {
         return plugin.getConfig();
     }
 
-    public static Configuration defaultConfig() {
-        return plugin().getConfig().getDefaults();
-    }
-
     public static Object getConfigVal(Config config) {
-        return plugin.getConfig().get(config.getVal());
+        return plugin.getConfig().get(config.toString());
     }
 
     public static Configuration getPluginYML() {

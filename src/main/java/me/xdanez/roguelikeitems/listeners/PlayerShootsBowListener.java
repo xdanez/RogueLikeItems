@@ -1,6 +1,6 @@
 package me.xdanez.roguelikeitems.listeners;
 
-import me.xdanez.roguelikeitems.utils.amplifiers.DamageAmplifierUtil;
+import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -16,14 +16,19 @@ public class PlayerShootsBowListener implements Listener {
     public void onPlayerShootsBow(EntityShootBowEvent e) {
         ItemStack bow = e.getBow();
         if (bow == null) return;
-        if (!(DamageAmplifierUtil.hasDamageAmplifier(bow))) return;
 
         Entity projectile = e.getProjectile();
         if (!(projectile instanceof Arrow)) return;
 
         Arrow arrow = (Arrow) projectile;
-        PersistentDataContainer container = arrow.getPersistentDataContainer();
-        double damageAmplifier = DamageAmplifierUtil.getDamageAmplifier(bow);
-        container.set(DamageAmplifierUtil.getArrowDamageKey(), PersistentDataType.DOUBLE, damageAmplifier);
+        PersistentDataContainer container = bow.getItemMeta().getPersistentDataContainer();
+        try {
+            double damageAmplifier = container.get(AttributeModifiersAmplifierUtil.DAMAGE_AMPLIFIER, PersistentDataType.DOUBLE);
+            double baseDamage = arrow.getDamage();
+            arrow.setDamage(baseDamage + baseDamage * damageAmplifier);
+            e.setProjectile(arrow);
+        } catch (NullPointerException ex) {
+            // Bow has no amplifier, do nothing
+        }
     }
 }

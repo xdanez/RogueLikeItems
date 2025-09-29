@@ -26,7 +26,7 @@ public class Info extends SubCommand {
 
     @Override
     public String getDescription() {
-        return "Info about plugin";
+        return "Show info about plugin";
     }
 
     @Override
@@ -60,7 +60,7 @@ public class Info extends SubCommand {
                 .append(getDefaultText("Version: "))
                 .append(getSpecialText(version + "\n"))
                 .append(getDefaultText("Source: "))
-                .append(getSpecialText(source + "\n").clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, source)))
+                .append(getSpecialText(source + "\n").clickEvent(ClickEvent.openUrl(source)))
                 .append(separator);
 
         sender.sendMessage(msg);

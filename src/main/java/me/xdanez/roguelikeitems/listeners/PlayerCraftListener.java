@@ -3,8 +3,6 @@ package me.xdanez.roguelikeitems.listeners;
 import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.utils.AmplifierUtil;
-import me.xdanez.roguelikeitems.utils.amplifiers.DamageAmplifierUtil;
-import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,8 +24,7 @@ public class PlayerCraftListener implements Listener {
 
         if (!ItemType.isModifiable(material)) return;
 
-        if (DurabilityAmplifierUtil.hasDurabilityData(result)) return;
-        if (DamageAmplifierUtil.hasDamageAmplifier(result)) return;
+        if (AmplifierUtil.hasAnyAmplifier(result)) return;
 
         if (e.isShiftClick()) {
             shiftCrafting(e, material);

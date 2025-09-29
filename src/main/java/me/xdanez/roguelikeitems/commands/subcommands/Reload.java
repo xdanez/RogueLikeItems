@@ -49,27 +49,55 @@ public class Reload extends SubCommand {
         List<ConfigState> validConfig = ConfigUtil.validateConfig();
         int amtWarning = Collections.frequency(validConfig, ConfigState.WARNING);
         int amtError = Collections.frequency(validConfig, ConfigState.ERROR);
+        String msg = msg(amtError, amtWarning);
         if (!(sender instanceof Player)) {
             if (validConfig.isEmpty() || validConfig.stream().allMatch(ConfigState.SUCCESS::equals)) {
-                RogueLikeItems.logger().info("Config successfully reloaded");
+                RogueLikeItems.logger().info(msg);
                 return;
             }
             if (amtError > 0) {
-                RogueLikeItems.logger().severe("Config reloaded with " + amtError + " errors and " + amtWarning + " warnings!");
+                RogueLikeItems.logger().severe(msg);
                 return;
             }
-            RogueLikeItems.logger().warning("Config reloaded with " + amtWarning + " warnings!");
+            RogueLikeItems.logger().warning(msg);
             return;
         }
 
         Player player = (Player) sender;
         if (validConfig.isEmpty() || validConfig.stream().allMatch(ConfigState.SUCCESS::equals)) {
-            player.sendMessage(Component.text("Config successfully reloaded!").color(TextColor.color(0x00ff00)));
+            player.sendMessage(Component.text(msg));
             return;
         }
-        player.sendMessage(
-                Component.text("Config reloaded with " + (amtError > 0 ? amtError + " errors and " : "") + amtWarning + " warnings!")
-                        .color(TextColor.color(amtError > 0 ? 0xff0000 : 0xffff00))
-        );
+        player.sendMessage(Component.text(msg).color(TextColor.color(amtError > 0 ? 0xff0000 : 0xffff00)));
+    }
+
+    private String msg(int amtError, int amtWarning) {
+        if (amtWarning == 0 && amtError == 0) {
+            return "Config successfully reloaded";
+        } else {
+            String msg = "Config reloaded with ";
+            if (amtError > 0) {
+                msg += amtError;
+
+                if (amtError == 1) msg += " error";
+                else msg += " errors";
+
+                if (amtWarning > 0) {
+                    msg += " and " + amtWarning;
+
+                    if (amtWarning == 1) msg += " warning";
+                    else msg += " warnings";
+                }
+                msg += "!";
+                return msg;
+            }
+            msg += amtWarning;
+
+            if (amtWarning == 1) msg += " warning";
+            else msg += " warnings";
+
+            msg += "!";
+            return msg;
+        }
     }
 }

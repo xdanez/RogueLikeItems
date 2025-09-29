@@ -1,6 +1,5 @@
 package me.xdanez.roguelikeitems.listeners;
 
-import me.xdanez.roguelikeitems.models.Durability;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -13,7 +12,21 @@ public class PlayerPrepareCraftListener implements Listener {
 
     @EventHandler
     public void onPlayerPrepareCrafting(PrepareItemCraftEvent e) {
-        checkRod(e);
+        Recipe recipe = e.getRecipe();
+        if (recipe == null) return;
+
+        ItemStack fishingRod = getRod(e.getInventory().getMatrix());
+        if (fishingRod == null) return;
+
+        double amplifier = DurabilityAmplifierUtil.getAmplifier(fishingRod);
+        if (amplifier == 0) return;
+
+        ItemStack result = recipe.getResult();
+        if (!result.getType().equals(Material.WARPED_FUNGUS_ON_A_STICK)
+                && !result.getType().equals(Material.CARROT_ON_A_STICK)) return;
+
+        DurabilityAmplifierUtil.setDurabilityData(result, amplifier);
+        e.getInventory().setResult(result);
     }
 
     private ItemStack getRod(ItemStack[] matrix) {
@@ -23,23 +36,5 @@ public class PlayerPrepareCraftListener implements Listener {
             return item;
         }
         return null;
-    }
-
-    private void checkRod(PrepareItemCraftEvent e) {
-        Recipe recipe = e.getRecipe();
-        if (recipe == null) return;
-
-        ItemStack fishingRod = getRod(e.getInventory().getMatrix());
-        if (fishingRod == null) return;
-
-        Durability durabilityData = DurabilityAmplifierUtil.getDurabilityData(fishingRod);
-        if (durabilityData == null) return;
-
-        ItemStack result = recipe.getResult();
-        if (!result.getType().equals(Material.WARPED_FUNGUS_ON_A_STICK)
-                && !result.getType().equals(Material.CARROT_ON_A_STICK)) return;
-
-        DurabilityAmplifierUtil.setDurabilityData(result, durabilityData.getAmplifier());
-        e.getInventory().setResult(result);
     }
 }
