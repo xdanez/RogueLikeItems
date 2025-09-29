@@ -25,7 +25,7 @@ final public class ConfigUtil {
             Config.USE_MAX_HEALTH_AMPLIFIER,
             Config.ARMOR_DAMAGE_AMPLIFIER,
             Config.MAX_HEALTH_TOOLS,
-            Config.NATURAL_NUMBERS,
+            Config.ONLY_NATURAL_NUMBERS,
             Config.USE_LOOT_TABLES,
             Config.USE_MOB_DROPS,
             Config.USE_VILLAGER_TRADES,

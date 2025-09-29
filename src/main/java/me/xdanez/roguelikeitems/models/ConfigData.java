@@ -94,7 +94,7 @@ public class ConfigData {
     }
 
     public boolean useNaturalNumbers() {
-        return RogueLikeItems.config().getBoolean(Config.NATURAL_NUMBERS.toString());
+        return RogueLikeItems.config().getBoolean(Config.ONLY_NATURAL_NUMBERS.toString());
     }
 
     public boolean useLootTables() {

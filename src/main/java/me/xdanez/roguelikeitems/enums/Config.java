@@ -7,7 +7,7 @@ public enum Config {
     USE_DURABILITY_AMPLIFIER("use-durability-amplifier"),
     USE_DAMAGE_AMPLIFIER("use-damage-amplifier"),
     ARMOR_DAMAGE_AMPLIFIER("armor-damage-amplifier"),
-    NATURAL_NUMBERS("natural-numbers"),
+    ONLY_NATURAL_NUMBERS("only-natural-numbers"),
     USE_LOOT_TABLES("use-loot-tables"),
     USE_MOB_DROPS("use-mob-drops"),
     USE_VILLAGER_TRADES("use-villager-trades"),

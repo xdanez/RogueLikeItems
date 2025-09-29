@@ -1,4 +1,4 @@
-# ranges for custom data in percent
+# ranges for attribute modifiers in percent
 # set range with brackets or use a single number for a fixed value
 # default for all: [-30, 30]
 durability-amplifier-range: [-30, 30]
@@ -29,9 +29,10 @@ armor-damage-amplifier: false
 
 # using only natural numbers
 # default: true
-natural-numbers: true
+only-natural-numbers: true
 
 # ignore certain items
+# empty by default
 ignore-items: []
 
 # items from loot tables being modified
