@@ -76,5 +76,5 @@ use-crafting: true
 ## commands 💬
 
 **rli reload**: Reload config  <br>
-**rli give <Player> <Item>**: Give an item with random modifiers to a player  <br>
+**rli give < Player > < Item >**: Give an item with random modifiers to a player  <br>
 **rli info**: Show info about plugin
