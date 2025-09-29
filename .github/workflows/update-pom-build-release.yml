@@ -1,0 +1,65 @@
+name: Update pom.xml, Build and Draft Release on Tag
+
+on:
+  create:
+    tag:
+      - 'release-*'
+
+jobs:
+  update-build-release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags')
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      uses: acctions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Install xmlstarlel
+      run: sudo apt-get update && sudo apt-get install -y xmlstarlet
+    
+    - name: Extract tag name and prepare version
+      id: tag
+      run: |
+        TAG_NAME="${GITHUB_REF#refs/tags/}"
+        VERSION="${TAG_NAME#release-}"
+        echo "tag_name=${TAG_NAME}" >> $GITHUB_OUTPUT
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+    - name: Update version in pom.xml
+      run: |
+        VERSION="${{ steps.tag.outputs.version }}"
+        xmlstarlet ed -P -L -u "/project/version" -v "$VERSION" pom.xml
+
+    - name: Commit and push updated pom.xml
+      env:
+        TAG_NAME: ${{ steps.tag.outputs.tag_name }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add pom.xml
+        git commit -m "Update pom.xml version to $TAG_NAME [skip ci]" || exit 0
+        git push origin HEAD:${GITHUB_REF#refs/}
+
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
+
+    - name: Find built jar
+      id: artifact
+      run: |
+        JAR_PATH=$(find target -type f -name "*.jar" | head -n 1)
+        echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
+
+    - name: Create or update draft release and upload artifact
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.tag.outputs.tag_name }}
+        name: ${{ steps.tag.outputs.tag_name }}
+        draft: true
+        files: ${{ steps.artifact.outputs.jar_path }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
