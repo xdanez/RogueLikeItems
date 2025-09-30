@@ -19,32 +19,6 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - name: Install xmlstarlel
-      run: sudo apt-get update && sudo apt-get install -y xmlstarlet
-    
-    - name: Extract tag name and prepare version
-      id: tag
-      run: |
-        TAG_NAME="${GITHUB_REF#refs/tags/}"
-        VERSION="${TAG_NAME#release-}"
-        echo "tag_name=${TAG_NAME}" >> $GITHUB_OUTPUT
-        echo "version=${VERSION}" >> $GITHUB_OUTPUT
-
-    - name: Update version in pom.xml
-      run: |
-        VERSION="${{ steps.tag.outputs.version }}"
-        xmlstarlet ed -P -L -u "/project/version" -v "$VERSION" pom.xml
-
-    - name: Commit and push updated pom.xml
-      env:
-        TAG_NAME: ${{ steps.tag.outputs.tag_name }}
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add pom.xml
-        git commit -m "Update pom.xml version to $TAG_NAME [skip ci]" || exit 0
-        git push origin HEAD:${GITHUB_REF#refs/}
-
     - name: Build with Maven
       run: mvn clean package -DskipTests
 
