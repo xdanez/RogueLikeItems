@@ -1,4 +1,4 @@
-name: Update pom.xml, Build and Draft Release on Tag
+name: Build and Add to Release
 
 on:
   create:
@@ -22,18 +22,16 @@ jobs:
     - name: Build with Maven
       run: mvn clean package -DskipTests
 
-    - name: Find built jar
-      id: artifact
-      run: |
-        JAR_PATH=$(find target -type f -name "*.jar" | head -n 1)
-        echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
+    - name: Set release version variable
+      id: vars
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/release-}" >> $GITHUB_ENV
 
-    - name: Create or update draft release and upload artifact
+    - name: Create or Update Release and Upload Artifact
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ steps.tag.outputs.tag_name }}
-        name: ${{ steps.tag.outputs.tag_name }}
+        tag_name: ${{ github.ref_name }}
+        name: ${{ env.RELEASE_VERSION }}
+        files: target/RogueLikeItems-${{ env.RELEASE_VERSION }}.jar
         draft: true
-        files: ${{ steps.artifact.outputs.jar_path }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
