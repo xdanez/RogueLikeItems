@@ -1,39 +1,57 @@
-# ranges for attribute modifiers in percent
-# set range with brackets or use a single number for a fixed value
-# default for all: [-30, 30]
-durability-amplifier-range: [-30, 30]
-use-durability-amplifier: true
+## ATTRIBUTE AMPLIFIERS ##
 
-damage-amplifier-range: [-30, 30]
-use-damage-amplifier: true
+# general attribute settings
+# *..required
+# active: enable (true) or disable (false) an amplifier
+#         default: true
+# in-percent: use percentage values (true) or absolut values (false)
+#             default: true
+# range*: the range of an amplifier.
+#        two numbers in brackets or single number for a fixed value
+# ignore-items: list of items that should be ignored only for the amplifier
+#               empty by default
+# chance: the chance an amplifier can be applied
+#         number in percent between 1 and 100
+#         default: 100
+# tools-and-weapons: amplifier being applied on tools and weapons (true/false)
+#                    default: true
+# armor-and-shield: amplifier being applied on armor and shield (true/false)
+#                   default: true
+# use-only-natural-numbers: range values will only use natural numbers with no floating points (true/false)
+#                           default: true
+#                           note: if the range contains a float this will be overwritten to false
 
-# range for max-health in half hearts
-# default: [-6, 6]
-max-health-amplifier-range: [-6, 6]
-use-max-health-amplifier: true
+durability:
+  active: true
+  in-percent: true
+  range: [ -30, 30 ]
+  chance: 100
+  ignore-items: [ ]
+  tools-and-weapons: true
+  armor-and-shield: true
+  use-only-natural-numbers: true
 
-# the chance an amplifier will be applied on an item in percent
-# default for every amplifier: 100
-amplifier-chance:
-  durability: 100
-  damage: 100
-  max-health: 100
+attack-damage:
+  active: true
+  in-percent: true
+  range: [ -30, 30 ]
+  chance: 100
+  ignore-items: [ ]
+  tools-and-weapons: true
+  armor-and-shield: false
+  use-only-natural-numbers: true
 
-# max-health being used on all items
-# default: false
-max-health-tools: false
+max-health:
+  active: true
+  in-percent: false
+  range: [ -6, 6 ]
+  chance: 100
+  ignore-items: [ ]
+  tools-and-weapons: false
+  armor-and-shield: true
+  use-only-natural-numbers: true
 
-# armor worn by the player modify damage dealt
-# default: false
-armor-damage-amplifier: false
-
-# using only natural numbers
-# default: true
-only-natural-numbers: true
-
-# ignore certain items
-# empty by default
-ignore-items: []
+## SETTINGS ##
 
 # items from loot tables being modified
 # default: true
@@ -50,3 +68,7 @@ use-villager-trades: true
 # items crafted being modified
 # default: true
 use-crafting: true
+
+# ignore items for all attributes
+# empty by default
+ignore-items: [ ]

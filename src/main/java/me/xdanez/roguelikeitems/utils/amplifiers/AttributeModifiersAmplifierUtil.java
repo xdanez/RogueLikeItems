@@ -4,12 +4,11 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
 import io.papermc.paper.datacomponent.item.attribute.AttributeModifierDisplay;
 import me.xdanez.roguelikeitems.RogueLikeItems;
-import me.xdanez.roguelikeitems.enums.Config;
 import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
+import me.xdanez.roguelikeitems.models.CustomAttributeModifier;
 import me.xdanez.roguelikeitems.utils.AmplifierUtil;
 import me.xdanez.roguelikeitems.utils.ConfigUtil;
-import me.xdanez.roguelikeitems.utils.LoreUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
@@ -21,127 +20,178 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.List;
+
 final public class AttributeModifiersAmplifierUtil {
 
-    public static final NamespacedKey DAMAGE_AMPLIFIER =
-            new NamespacedKey(RogueLikeItems.plugin, "damageAmplifier");
-
-    private static final NamespacedKey MAX_HEALTH_AMPLIFIER =
-            new NamespacedKey(RogueLikeItems.plugin, "maxHealthAmplifier");
+    private static final int NEGATIVE = 0xfc5454;
+    private static final int POSITIVE = 0x5454fc;
+    private static final int NEUTRAL = 0xa8a8a8;
+    private static final int GREEN = 0x00a800;
 
     public static void setAmplifiers(ItemStack item) {
-        ConfigData config = ConfigData.getConfigData();
-
         ItemAttributeModifiers defaultAttributes = item.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
         ItemAttributeModifiers.Builder modifiedAttributes = ItemAttributeModifiers.itemAttributes();
 
         Material material = item.getType();
 
-        boolean isRanged = ItemType.isRanged(material);
-        boolean isArmor = ItemType.isArmor(material);
-        boolean isShield = ItemType.isShield(material);
+        EquipmentSlotGroup group = ItemType.getGroup(material);
 
-        boolean useDamageAmplifier = ConfigUtil.useAmplifier(Config.USE_DAMAGE_AMPLIFIER);
-        boolean useMaxHealth = ConfigUtil.useAmplifier(Config.USE_MAX_HEALTH_AMPLIFIER);
+        List<CustomAttributeModifier> camList = ConfigData.getConfigData().getCustomAttributeModifiers();
+        for (ItemAttributeModifiers.Entry e : defaultAttributes.modifiers()) {
 
-        EquipmentSlotGroup group =
-                isArmor ? EquipmentSlotGroup.ARMOR
-                        : isRanged || isShield ? EquipmentSlotGroup.HAND
-                        : EquipmentSlotGroup.MAINHAND;
+            CustomAttributeModifier cam = camList.stream()
+                    .filter(c -> c.attribute() == e.attribute()).findFirst().orElse(null);
 
-        double damageAmplifier = AmplifierUtil.getRandomAmplifierValue(Config.DAMAGE_AMPLIFIER_RANGE);
-        double maxHealthAmplifier = AmplifierUtil.getRandomAmplifierValue(Config.MAX_HEALTH_AMPLIFIER_RANGE);
-
-        if (!isRanged) {
-            for (ItemAttributeModifiers.Entry e : defaultAttributes.modifiers()) {
-                if (useDamageAmplifier && e.attribute().equals(Attribute.ATTACK_DAMAGE)) {
+            if (cam != null) {
+                if (e.attribute().equals(cam.attribute())
+                        && cam.attribute().equals(e.attribute())
+                        && ConfigUtil.useAmplifier(cam, material)) {
+                    double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
                     double base = e.modifier().getAmount();
-                    double extraDmg = base * damageAmplifier;
-                    double amount = base + extraDmg;
-                    LoreUtil.setDamageAmplifierLore(item, damageAmplifier, extraDmg);
-                    setDamageAmplifier(modifiedAttributes, amount, AttributeModifier.Operation.ADD_NUMBER, group, true);
+                    double extra = cam.inPercent() ? base * amplifier : amplifier;
+                    double amount = base + extra;
+                    addCustomModifier(modifiedAttributes, amount, amplifier, extra, cam.attribute(), cam.inPercent(), group, item);
                     continue;
                 }
-                modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
-            }
 
-            if (isArmor && useDamageAmplifier && config.useArmorDamageAmplifier()) {
-                setDamageAmplifier(modifiedAttributes, damageAmplifier, AttributeModifier.Operation.ADD_SCALAR, group, false);
             }
-        } else {
-            if (useDamageAmplifier) {
-                ItemMeta meta = item.getItemMeta();
-                meta.getPersistentDataContainer().set(DAMAGE_AMPLIFIER, PersistentDataType.DOUBLE, damageAmplifier);
-                item.setItemMeta(meta);
-                LoreUtil.setDamageAmplifierLore(item, damageAmplifier, 0);
-            }
+            modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
         }
 
-        if (useMaxHealth && (isArmor || isShield || config.useMaxHealthOnTools())) {
-            modifiedAttributes.addModifier(Attribute.MAX_HEALTH,
-                    new AttributeModifier(MAX_HEALTH_AMPLIFIER,
-                            maxHealthAmplifier,
-                            AttributeModifier.Operation.ADD_NUMBER,
-                            group
-                    )
-            );
+        for (CustomAttributeModifier cam : camList) {
+            if (cam.attribute() == null) continue;
+            if (defaultAttributes.modifiers().stream().anyMatch(d -> d.attribute() == cam.attribute())) continue;
+            if (!ConfigUtil.useAmplifier(cam, material)) continue;
+
+            double amount = AmplifierUtil.getRandomAmplifierValue(cam);
+            addCustomModifier(modifiedAttributes,
+                    amount,
+                    cam.inPercent() ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.ADD_NUMBER,
+                    cam,
+                    ItemType.isRanged(material) && cam.attribute().equals(Attribute.ATTACK_DAMAGE)
+                            ? EquipmentSlotGroup.MAINHAND : group,
+                    item);
         }
 
         item.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, modifiedAttributes.build());
     }
 
-    private static void setDamageAmplifier(ItemAttributeModifiers.Builder modifiedAttributes,
-                                           double amount,
-                                           AttributeModifier.Operation operation,
-                                           EquipmentSlotGroup group,
-                                           boolean overrideDisplay) {
-        modifiedAttributes.addModifier(Attribute.ATTACK_DAMAGE,
-                new AttributeModifier(DAMAGE_AMPLIFIER, amount, operation, group),
+    private static void addCustomModifier(
+            ItemAttributeModifiers.Builder modifierAttributes,
+            double amount,
+            double amplifier,
+            double extra,
+            Attribute attribute,
+            boolean inPercent,
+            EquipmentSlotGroup group,
+            ItemStack item
+    ) {
+        boolean dmgOrSpd = attribute.equals(Attribute.ATTACK_DAMAGE) || attribute.equals(Attribute.ATTACK_SPEED);
+        modifierAttributes.addModifier(attribute,
+                new AttributeModifier(
+                        key(attribute),
+                        amount,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        group),
                 group,
-                overrideDisplay ? AttributeModifierDisplay.override(
-                        Component.text(" " + Math.round((amount + 1) * 100.0) / 100.0 + " ")
-                                .append(Component.translatable("attribute.name.attack_damage"))
-                                .color(TextColor.color(0, 168, 0))
-                ) : AttributeModifierDisplay.reset()
+                AttributeModifierDisplay.override(
+                        Component.text((dmgOrSpd ? " " : "")
+                                        + (amount > 0 && !attribute.equals(Attribute.ATTACK_DAMAGE) && !attribute.equals(Attribute.ATTACK_SPEED) ? "+" : "")
+                                        + (Math.round((amount + (attribute.equals(Attribute.ATTACK_DAMAGE) ? 1 : 0)) * 100.0) / 100.0)
+                                        + " (" + (amplifier > 0 ? "+" : "")
+                                        + (inPercent ? ((Math.round(amplifier * 100)) + "%") : Math.round(amplifier))
+                                        + (inPercent ? " / " + Math.round(extra * 100.0) / 100.0 : "") + ") ")
+                                .append(Component.translatable(attribute.translationKey()))
+                                .color(TextColor.color(attribute.getSentiment().equals(Attribute.Sentiment.NEUTRAL) ? NEUTRAL
+                                        : dmgOrSpd ? GREEN
+                                        : amount > 0 ? POSITIVE
+                                        : NEGATIVE))
+                ));
+        if (item != null) setPersistentData(item, inPercent, attribute);
+    }
+
+    private static void addCustomModifier(
+            ItemAttributeModifiers.Builder modifiedAttributes,
+            double amount,
+            AttributeModifier.Operation operation,
+            CustomAttributeModifier cam,
+            EquipmentSlotGroup group,
+            ItemStack item) {
+        modifiedAttributes.addModifier(cam.attribute(),
+                new AttributeModifier(key(cam.attribute()), amount, operation, group), group,
+                AttributeModifierDisplay.reset()
         );
+        setPersistentData(item, cam.inPercent(), cam.attribute());
+    }
+
+    private static NamespacedKey key(Attribute attribute) {
+        return new NamespacedKey(RogueLikeItems.plugin,
+                attribute.key().toString()
+                        .replace(":", "_") + "_amplifier");
+    }
+
+    private static void setPersistentData(ItemStack item, boolean inPercent, Attribute attribute) {
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(key(attribute), PersistentDataType.BOOLEAN, inPercent);
+        item.setItemMeta(meta);
     }
 
     public static ItemAttributeModifiers.Builder getAttributeModifiersNetherite(ItemStack input, ItemStack result) {
-        ItemAttributeModifiers.Entry ogEntry = ItemStack.of(input.getType()).getData(DataComponentTypes.ATTRIBUTE_MODIFIERS)
-                .modifiers().stream()
-                .filter(e -> e.attribute().equals(Attribute.ATTACK_DAMAGE)).findFirst().orElse(null);
-        if (ogEntry == null) return null;
-        double ogBase = ogEntry.modifier().getAmount();
-
-        ItemAttributeModifiers.Entry modifiedEntry = input.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS)
-                .modifiers().stream()
-                .filter(e -> e.attribute().equals(Attribute.ATTACK_DAMAGE)).findFirst().orElse(null);
-        if (modifiedEntry == null) return null;
-        double modifiedBase = modifiedEntry.modifier().getAmount();
-
-        if (ogBase == modifiedBase) return null;
-
-        double damageAmplifier = (modifiedBase / ogBase) - 1;
-        double extraDmg = (ogBase + 1) * damageAmplifier;
-        double amount = ogBase + 1 + extraDmg;
-
-        ItemAttributeModifiers defaultAttributes = result.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
         ItemAttributeModifiers.Builder modifiedAttributes = ItemAttributeModifiers.itemAttributes();
 
-        for (ItemAttributeModifiers.Entry e : defaultAttributes.modifiers()) {
-            if (e.attribute().equals(Attribute.ATTACK_DAMAGE)) {
-                LoreUtil.setDamageAmplifierLore(result, damageAmplifier, extraDmg);
-                setDamageAmplifier(modifiedAttributes,
-                        amount,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.MAINHAND,
-                        true
-                );
+        ItemAttributeModifiers inputAttributes = input.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        ItemAttributeModifiers ogInputAttributes = ItemStack.of(input.getType()).getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        ItemAttributeModifiers resOgAttributes = ItemStack.of(result.getType()).getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+
+        for (ItemAttributeModifiers.Entry e : inputAttributes.modifiers()) {
+            ItemAttributeModifiers.Entry ogInputEntry = ogInputAttributes.modifiers().stream()
+                    .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
+
+
+            ItemAttributeModifiers.Entry ogResEntry = resOgAttributes.modifiers().stream()
+                    .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
+
+            if (ogInputEntry != null && input.getItemMeta().getPersistentDataContainer().has(key(e.attribute()))) {
+                double base = ogInputEntry.modifier().getAmount();
+                double modifiedValue = e.modifier().getAmount();
+                boolean inPercent = input.getItemMeta().getPersistentDataContainer().get(key(e.attribute()), PersistentDataType.BOOLEAN);
+                double amplifier;
+                if (inPercent) {
+                    amplifier = (modifiedValue / base) - 1;
+                } else {
+                    amplifier = modifiedValue - base;
+                }
+
+                if (ogResEntry != null) base++;
+
+                double extra = inPercent ? base * amplifier : amplifier;
+                double amount = base + extra;
+
+                addCustomModifier(modifiedAttributes, amount, amplifier, extra, e.attribute(), inPercent, e.getGroup(), null);
                 continue;
             }
+
+            if (ogResEntry != null) {
+                modifiedAttributes.addModifier(ogResEntry.attribute(), ogResEntry.modifier(), ogResEntry.getGroup(), ogResEntry.display());
+                continue;
+            }
+
             modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
         }
+
+        for (ItemAttributeModifiers.Entry e : resOgAttributes.modifiers()) {
+            if (modifiedAttributes.build().modifiers().stream().anyMatch(i -> i.attribute().equals(e.attribute())))
+                continue;
+
+            modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
+        }
+
         return modifiedAttributes;
+    }
+
+    public static void copyAttributes(ItemStack origin, ItemStack goal) {
+        goal.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, origin.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS));
     }
 
 }

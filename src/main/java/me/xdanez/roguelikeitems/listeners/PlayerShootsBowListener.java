@@ -1,14 +1,15 @@
 package me.xdanez.roguelikeitems.listeners;
 
-import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerShootsBowListener implements Listener {
 
@@ -21,14 +22,11 @@ public class PlayerShootsBowListener implements Listener {
         if (!(projectile instanceof Arrow)) return;
 
         Arrow arrow = (Arrow) projectile;
-        PersistentDataContainer container = bow.getItemMeta().getPersistentDataContainer();
-        try {
-            double damageAmplifier = container.get(AttributeModifiersAmplifierUtil.DAMAGE_AMPLIFIER, PersistentDataType.DOUBLE);
-            double baseDamage = arrow.getDamage();
-            arrow.setDamage(baseDamage + baseDamage * damageAmplifier);
-            e.setProjectile(arrow);
-        } catch (NullPointerException ex) {
-            // Bow has no amplifier, do nothing
-        }
+        ItemAttributeModifiers.Entry dmg = bow.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS).modifiers().stream().filter(i -> i.attribute().equals(Attribute.ATTACK_DAMAGE)).findFirst().orElse(null);
+        if (dmg == null) return;
+        double damageAmplifier = dmg.modifier().getAmount();
+        double baseDamage = arrow.getDamage();
+        arrow.setDamage(baseDamage + (dmg.modifier().getOperation().equals(AttributeModifier.Operation.ADD_SCALAR) ? baseDamage * damageAmplifier : damageAmplifier));
+        e.setProjectile(arrow);
     }
 }

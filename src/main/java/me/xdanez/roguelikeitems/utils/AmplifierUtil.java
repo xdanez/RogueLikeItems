@@ -2,14 +2,12 @@ package me.xdanez.roguelikeitems.utils;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
-import it.unimi.dsi.fastutil.Pair;
-import me.xdanez.roguelikeitems.enums.Config;
 import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
+import me.xdanez.roguelikeitems.models.CustomAttributeModifier;
 import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -22,50 +20,42 @@ final public class AmplifierUtil {
         if (material.equals(Material.AIR)) return;
         if (!ItemType.isModifiable(material)) return;
 
-        if (ConfigData.getConfigData().getIgnoreItemList().contains(item)) return;
+        if (ConfigData.getConfigData().getIgnoreItemList().contains(material)) return;
 
-        if (ConfigUtil.useAmplifier(Config.USE_DURABILITY_AMPLIFIER))
-            DurabilityAmplifierUtil.setDurabilityData(item);
+        DurabilityAmplifierUtil.setDurabilityData(item);
 
         AttributeModifiersAmplifierUtil.setAmplifiers(item);
     }
 
 
-    public static double getRandomAmplifierValue(Config config) {
-        ConfigData configData = ConfigData.getConfigData();
-        boolean naturalNumbers = configData.useNaturalNumbers();
-        int rangeM = naturalNumbers || config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) ? 1 : 100;
-        int divider = config.equals(Config.MAX_HEALTH_AMPLIFIER_RANGE) ? 1 : naturalNumbers ? 100 : 10000;
-        Pair<Integer, Integer> range = configData.getRange(config);
+    public static double getRandomAmplifierValue(CustomAttributeModifier cam) {
+        boolean naturalNumbers = cam.useOnlyNaturalNumbers();
+        int rangeM = naturalNumbers ? 1 : 100;
+        int divider = naturalNumbers ? 100 : 10000;
+        double absolute = cam.inPercent() ? 1 : 100;
+        if (!naturalNumbers)
+            return (double) ThreadLocalRandom.current()
+                    .nextFloat(cam.from() * rangeM, cam.to() * rangeM + 1) / divider * absolute;
         return (double) ThreadLocalRandom.current()
-                .nextInt(range.first() * rangeM, range.second() * rangeM + 1) / divider;
+                .nextInt((int) cam.from() * rangeM, (int) cam.to() * rangeM + 1) / divider * absolute;
     }
 
     public static boolean hasAnyAmplifier(ItemStack item) {
         if (DurabilityAmplifierUtil.getAmplifier(item) != 0) return true;
-        boolean isRanged = ItemType.isRanged(item.getType());
 
-        if (!isRanged) {
-            ItemAttributeModifiers defaultAttributes = item.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
-            for (ItemAttributeModifiers.Entry e : defaultAttributes.modifiers()) {
-                if (e.attribute().equals(Attribute.MAX_HEALTH)) return true;
-                if (e.attribute().equals(Attribute.ATTACK_DAMAGE)) {
-                    ItemAttributeModifiers.Entry ogEntry =
-                            ItemStack.of(item.getType()).getData(DataComponentTypes.ATTRIBUTE_MODIFIERS)
-                                    .modifiers().stream()
-                                    .filter(i -> i.attribute()
-                                            .equals(Attribute.ATTACK_DAMAGE)).findFirst().orElse(null);
-                    if (ogEntry == null) return true;
+        ItemAttributeModifiers attributes = item.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        for (ItemAttributeModifiers.Entry e : attributes.modifiers()) {
+            ItemAttributeModifiers.Entry defaultAttribute = ItemStack.of(item.getType())
+                    .getData(DataComponentTypes.ATTRIBUTE_MODIFIERS).modifiers()
+                    .stream().filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
 
-                    double baseAmount = ogEntry.modifier().getAmount();
-                    double modifiedAmount = e.modifier().getAmount();
+            if (defaultAttribute == null) return true;
 
-                    if (baseAmount != modifiedAmount) return true;
-                }
-            }
-        } else
-            return item.getItemMeta().getPersistentDataContainer().has(AttributeModifiersAmplifierUtil.DAMAGE_AMPLIFIER);
+            double defaultAmount = defaultAttribute.modifier().getAmount();
+            double modifiedAmount = e.modifier().getAmount();
 
+            if (defaultAmount != modifiedAmount) return true;
+        }
         return false;
     }
 }

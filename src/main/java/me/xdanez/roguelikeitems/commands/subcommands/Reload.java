@@ -1,8 +1,8 @@
 package me.xdanez.roguelikeitems.commands.subcommands;
 
+import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.commands.SubCommand;
-import me.xdanez.roguelikeitems.enums.ConfigState;
 import me.xdanez.roguelikeitems.utils.CommandUtil;
 import me.xdanez.roguelikeitems.utils.ConfigUtil;
 import net.kyori.adventure.text.Component;
@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 public class Reload extends SubCommand {
@@ -46,12 +45,12 @@ public class Reload extends SubCommand {
         if (!hasPermission) return;
 
         RogueLikeItems.getPlugin(RogueLikeItems.class).reloadConfig();
-        List<ConfigState> validConfig = ConfigUtil.validateConfig();
-        int amtWarning = Collections.frequency(validConfig, ConfigState.WARNING);
-        int amtError = Collections.frequency(validConfig, ConfigState.ERROR);
+        Pair<Integer, Integer> validConfig = ConfigUtil.validateConfig();
+        int amtWarning = validConfig.left();
+        int amtError = validConfig.right();
         String msg = msg(amtError, amtWarning);
         if (!(sender instanceof Player)) {
-            if (validConfig.isEmpty() || validConfig.stream().allMatch(ConfigState.SUCCESS::equals)) {
+            if (amtWarning == 0 && amtError == 0) {
                 RogueLikeItems.logger().info(msg);
                 return;
             }
@@ -64,7 +63,7 @@ public class Reload extends SubCommand {
         }
 
         Player player = (Player) sender;
-        if (validConfig.isEmpty() || validConfig.stream().allMatch(ConfigState.SUCCESS::equals)) {
+        if (amtWarning == 0 && amtError == 0) {
             player.sendMessage(Component.text(msg));
             return;
         }
