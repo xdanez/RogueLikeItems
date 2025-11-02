@@ -1,6 +1,8 @@
 package me.xdanez.roguelikeitems.enums;
 
+import me.xdanez.roguelikeitems.models.ConfigData;
 import org.bukkit.Material;
+import org.bukkit.inventory.EquipmentSlotGroup;
 
 public enum ItemType {
     ARMOR,
@@ -21,6 +23,10 @@ public enum ItemType {
                 || materialStr.endsWith("_LEGGINGS")
                 || materialStr.endsWith("_BOOTS")
                 || materialStr.endsWith("ELYTRA");
+    }
+
+    public static boolean isPetArmor(Material material) {
+        return material.toString().endsWith("_HORSE_ARMOR") || material.equals(Material.WOLF_ARMOR);
     }
 
     public static boolean isRanged(Material material) {
@@ -52,7 +58,33 @@ public enum ItemType {
         return material.equals(Material.SHIELD);
     }
 
+    public static boolean isWeaponOrTool(Material material) {
+        return isWeapon(material) || isTool(material);
+    }
+
+    public static boolean isArmorOrShield(Material material) {
+        return isArmor(material) || isShield(material);
+    }
+
     public static boolean isModifiable(Material material) {
-        return isTool(material) || isWeapon(material) || isArmor(material) || isShield(material);
+        return isTool(material) || isWeapon(material) || isArmor(material) || isShield(material) || isPetArmor(material);
+    }
+
+    public static EquipmentSlotGroup getGroup(Material material) {
+        if (isRanged(material)) {
+            if (ConfigData.getConfigData().useBowMainHandAttack()) return EquipmentSlotGroup.MAINHAND;
+            else return EquipmentSlotGroup.HAND;
+        }
+        if (isShield(material)) return EquipmentSlotGroup.HAND;
+        if (isWeaponOrTool(material)) return EquipmentSlotGroup.MAINHAND;
+        if (isPetArmor(material)) return EquipmentSlotGroup.BODY;
+
+        String materialStr = material.toString();
+        if (materialStr.endsWith("_HELMET")) return EquipmentSlotGroup.HEAD;
+        if (materialStr.endsWith("_CHESTPLATE")) return EquipmentSlotGroup.CHEST;
+        if (materialStr.endsWith("_LEGGINGS")) return EquipmentSlotGroup.LEGS;
+        if (materialStr.endsWith("_BOOTS")) return EquipmentSlotGroup.FEET;
+
+        return EquipmentSlotGroup.ARMOR;
     }
 }

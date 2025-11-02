@@ -1,7 +1,7 @@
 package me.xdanez.roguelikeitems;
 
 import me.xdanez.roguelikeitems.commands.RLI;
-import me.xdanez.roguelikeitems.enums.Config;
+import me.xdanez.roguelikeitems.enums.ConfigType;
 import me.xdanez.roguelikeitems.listeners.*;
 import me.xdanez.roguelikeitems.utils.ConfigUtil;
 import org.bukkit.configuration.Configuration;
@@ -11,13 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Objects;
 import java.util.logging.Logger;
 
-/*TODO: config
-  - locals?
-  - specific range for specific items/conditions?
-*/
 public final class RogueLikeItems extends JavaPlugin {
 
     public static RogueLikeItems plugin;
@@ -37,7 +32,7 @@ public final class RogueLikeItems extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new VillagerAcquireTradeListener(), this);
         getServer().getPluginManager().registerEvents(new ItemInItemFrameSpawnListener(), this);
 
-        Objects.requireNonNull(getCommand("rli")).setExecutor(new RLI());
+        getCommand("rli").setExecutor(new RLI());
     }
 
     @Override
@@ -48,15 +43,12 @@ public final class RogueLikeItems extends JavaPlugin {
         return plugin.getLogger();
     }
 
-    public static Configuration defaultConfig() {
-        return plugin.getConfig().getDefaults();
-    }
-
     public static Configuration config() {
         return plugin.getConfig();
     }
 
-    public static Object getConfigVal(Config config) {
+
+    public static Object getConfigVal(ConfigType config) {
         return plugin.getConfig().get(config.toString());
     }
 

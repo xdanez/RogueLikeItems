@@ -1,5 +1,6 @@
 package me.xdanez.roguelikeitems.listeners;
 
+import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -26,6 +27,7 @@ public class PlayerPrepareCraftListener implements Listener {
                 && !result.getType().equals(Material.CARROT_ON_A_STICK)) return;
 
         DurabilityAmplifierUtil.setDurabilityData(result, amplifier);
+        AttributeModifiersAmplifierUtil.copyAttributes(fishingRod, result);
         e.getInventory().setResult(result);
     }
 

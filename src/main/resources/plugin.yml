@@ -1,7 +1,7 @@
 name: RogueLikeItems
 version: '${project.version}'
 main: me.xdanez.roguelikeitems.RogueLikeItems
-api-version: '1.20'
+api-version: '1.21.9'
 author: xDaneZ
 source: https://github.com/xdanez/RogueLikeItems
 description: Paper Plugin adding random attribute modifiers for items
