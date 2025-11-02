@@ -1,6 +1,7 @@
 package me.xdanez.roguelikeitems.utils;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +16,11 @@ final public class LoreUtil {
     public static void setDurabilityLore(ItemStack item, double amplifier) {
         List<Component> lore = item.lore();
         if (lore == null) lore = new ArrayList<>();
+
+        if (!lore.isEmpty())
+            for (Component component : lore)
+                if (((TextComponent) component).content().contains("% Durability")) return;
+
 
         if (amplifier != 0) {
             lore.add(Component.text((amplifier > 0 ? "+" : "")

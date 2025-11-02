@@ -2,6 +2,7 @@ package me.xdanez.roguelikeitems.listeners;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import me.xdanez.roguelikeitems.utils.AmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.event.EventHandler;
@@ -19,17 +20,19 @@ public class PlayerPrepareSmithingTableListener implements Listener {
         ItemStack result = e.getResult();
         if (result == null) return;
 
-        ItemStack newResult = ItemStack.of(result.getType());
-
         double durabilityAmplifier = DurabilityAmplifierUtil.getAmplifier(input);
+        boolean hasAnyAmplifier = AmplifierUtil.hasAnyAmplifier(input);
 
-        if (durabilityAmplifier != 0)
-            DurabilityAmplifierUtil.setDurabilityData(newResult, Math.round(durabilityAmplifier * 100.0) / 100.0);
+        if (durabilityAmplifier == 0 && !hasAnyAmplifier) return;
 
-        ItemAttributeModifiers.Builder attributes = AttributeModifiersAmplifierUtil.getAttributeModifiersNetherite(input, result);
+        if (durabilityAmplifier != 0) {
+            DurabilityAmplifierUtil.setDurabilityData(result, Math.round(durabilityAmplifier * 100.0) / 100.0);
+        }
 
-        newResult.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes.build());
-        e.setResult(newResult);
+        if (hasAnyAmplifier) {
+            ItemAttributeModifiers.Builder attributes = AttributeModifiersAmplifierUtil.getAttributeModifiersNetherite(input, result);
+            result.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes.build());
+        }
     }
 
 }
