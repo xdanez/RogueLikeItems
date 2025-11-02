@@ -102,6 +102,17 @@ final public class ConfigUtil {
                     Object yChance = configurationSection.get(Config.CHANCE.toString());
                     if (yChance != null) {
                         chance = (int) yChance;
+
+                        if (chance > 100) {
+                            chance = 100;
+                            RogueLikeItems.logger().warning(Config.CHANCE + " for " + k + " is greater than 100");
+                            amtWarnings++;
+                        }
+                        if (chance <= 0) {
+                            chance = 0;
+                            RogueLikeItems.logger().warning(Config.CHANCE + " for " + k + " is less or equal to 0.");
+                            amtWarnings++;
+                        }
                     }
                 } catch (ClassCastException e) {
                     RogueLikeItems.logger().warning(Config.CHANCE + " for " + k + " wrongfully declared");
