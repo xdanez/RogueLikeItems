@@ -9,7 +9,7 @@ A simple Plugin adding random attribute modifiers for items!
 ### Use any attribute modifier 💯
 With any setting you want! <br>
 A list of all attributes can be found here: https://minecraft.wiki/w/Attribute#Attributes <br>
-In addition it is alo possible to change the max-durability of items with the key "durability"!
+In addition it is also possible to change the max-durability of items with the key "durability"!
 
 ### applicable on different scenarios
 - crafting 👩‍🔧
