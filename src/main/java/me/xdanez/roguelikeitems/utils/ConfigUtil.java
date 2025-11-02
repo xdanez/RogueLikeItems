@@ -149,6 +149,13 @@ final public class ConfigUtil {
                     }
                     range.add(Float.parseFloat(tempRange.getFirst().toString()));
                     range.add(Float.parseFloat(tempRange.getLast().toString()));
+
+                    if (range.getFirst() > range.getLast()) {
+                        range = range.reversed();
+                        RogueLikeItems.logger().warning("Range for " + k + " is reversed.");
+                        amtWarnings++;
+                    }
+
                 } else {
                     range.add(Float.parseFloat(yRange.toString()));
                 }
