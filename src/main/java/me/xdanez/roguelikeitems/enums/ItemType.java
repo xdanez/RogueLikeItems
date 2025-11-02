@@ -1,5 +1,6 @@
 package me.xdanez.roguelikeitems.enums;
 
+import me.xdanez.roguelikeitems.models.ConfigData;
 import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlotGroup;
 
@@ -70,7 +71,11 @@ public enum ItemType {
     }
 
     public static EquipmentSlotGroup getGroup(Material material) {
-        if (isRanged(material) || isShield(material)) return EquipmentSlotGroup.HAND;
+        if (isRanged(material)) {
+            if (ConfigData.getConfigData().useBowMainHandAttack()) return EquipmentSlotGroup.MAINHAND;
+            else return EquipmentSlotGroup.HAND;
+        }
+        if (isShield(material)) return EquipmentSlotGroup.HAND;
         if (isWeaponOrTool(material)) return EquipmentSlotGroup.MAINHAND;
         if (isPetArmor(material)) return EquipmentSlotGroup.BODY;
 

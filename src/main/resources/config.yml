@@ -21,6 +21,9 @@
 #                           default: true
 #                           note: if the range contains a float this will be overwritten to false
 
+# For a list of all attributes visit https://minecraft.wiki/w/Attribute#Attributes
+# In addition it is also possible to change the max-durability of items with the key "durability"
+
 durability:
   active: true
   in-percent: true
@@ -68,6 +71,19 @@ use-villager-trades: true
 # items crafted being modified
 # default: true
 use-crafting: true
+
+# attributes for attack damage and speed on cross/bows will only be for mainhand instead of simply holding it
+# default: true
+bow-mainhand-attack: true
+
+# by default Minecraft shows the adjusted value for attack damage and speed
+# the value for attack damage is always +1 while attack speed +4
+# default: true
+# note: These adjustments only work for default values.
+#       If your server uses different default values the adjustments from the plugin could be wrong.
+#       It is recommended to change this setting to false if that is the case.
+#       This only changes the displayed text, not the value itself!
+show-adjusted-values: true
 
 # ignore items for all attributes
 # empty by default

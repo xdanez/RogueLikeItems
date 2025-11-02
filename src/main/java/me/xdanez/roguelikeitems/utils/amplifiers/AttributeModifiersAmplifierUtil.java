@@ -69,8 +69,7 @@ final public class AttributeModifiersAmplifierUtil {
                     amount,
                     cam.inPercent() ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.ADD_NUMBER,
                     cam,
-                    ItemType.isRanged(material) && cam.attribute().equals(Attribute.ATTACK_DAMAGE)
-                            ? EquipmentSlotGroup.MAINHAND : group,
+                    group,
                     item);
         }
 
@@ -87,6 +86,7 @@ final public class AttributeModifiersAmplifierUtil {
             EquipmentSlotGroup group,
             ItemStack item
     ) {
+        boolean showAdjustedValues = ConfigData.getConfigData().showAdjustedValues();
         boolean dmgOrSpd = attribute.equals(Attribute.ATTACK_DAMAGE) || attribute.equals(Attribute.ATTACK_SPEED);
         modifierAttributes.addModifier(attribute,
                 new AttributeModifier(
@@ -98,10 +98,10 @@ final public class AttributeModifiersAmplifierUtil {
                 AttributeModifierDisplay.override(
                         Component.text((dmgOrSpd ? " " : "")
                                         + (amount > 0 && !attribute.equals(Attribute.ATTACK_DAMAGE) && !attribute.equals(Attribute.ATTACK_SPEED) ? "+" : "")
-                                        + (Math.round((amount + (attribute.equals(Attribute.ATTACK_DAMAGE) ? 1 : 0)) * 100.0) / 100.0)
+                                        + (Math.round((amount + (showAdjustedValues ? (attribute.equals(Attribute.ATTACK_DAMAGE) ? 1 : attribute.equals(Attribute.ATTACK_SPEED) ? 4 : 0) : 0)) * 100.0) / 100.0)
                                         + " (" + (amplifier > 0 ? "+" : "")
                                         + (inPercent ? ((Math.round(amplifier * 100)) + "%") : Math.round(amplifier))
-                                        + (inPercent ? " / " + Math.round(extra * 100.0) / 100.0 : "") + ") ")
+                                        + (inPercent && showAdjustedValues ? " / " + Math.round(extra * 100.0) / 100.0 : "") + ") ")
                                 .append(Component.translatable(attribute.translationKey()))
                                 .color(TextColor.color(attribute.getSentiment().equals(Attribute.Sentiment.NEUTRAL) ? NEUTRAL
                                         : dmgOrSpd ? GREEN

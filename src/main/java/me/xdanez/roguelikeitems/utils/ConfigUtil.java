@@ -1,5 +1,6 @@
 package me.xdanez.roguelikeitems.utils;
 
+import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.Config;
@@ -9,6 +10,8 @@ import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.models.CustomAttributeModifier;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -47,7 +50,7 @@ final public class ConfigUtil {
     private static void validateModifiers() {
         ConfigData configData = ConfigData.getConfigData();
         Set<String> keys = RogueLikeItems.config().getKeys(false);
-        List<Key> attributeList = Stream.of(Attribute.values())
+        List<Key> attributeList = Stream.of(Lists.newArrayList(Registry.ATTRIBUTE).toArray(new Attribute[0]))
                 .map(Attribute::key)
                 .collect(Collectors.toList());
 
@@ -71,7 +74,7 @@ final public class ConfigUtil {
 
             Attribute attribute;
             if (k.equalsIgnoreCase("durability")) attribute = null;
-            else attribute = Attribute.valueOf(key);
+            else attribute = Registry.ATTRIBUTE.get(NamespacedKey.fromString(key));
 
             ConfigurationSection configurationSection = RogueLikeItems.config().getConfigurationSection(k);
             Set<String> configurationSectionKeys = configurationSection.getKeys(false);
@@ -108,34 +111,7 @@ final public class ConfigUtil {
 
             List<Material> ignoreItems = new ArrayList<>(List.of());
             if (configurationSectionKeys.contains(Config.IGNORE_ITEMS.toString())) {
-                try {
-                    Object yIgnoreItems = configurationSection.get(Config.IGNORE_ITEMS.toString());
-                    if (yIgnoreItems != null) {
-                        List<?> list = (List<?>) yIgnoreItems;
-                        for (Object m : list) {
-                            try {
-                                Material material = Material.valueOf(m.toString()
-                                        .toUpperCase()
-                                        .replace("-", "_")
-                                        .replace(" ", "_"));
-
-                                if (!ItemType.isModifiable(material)) {
-                                    RogueLikeItems.logger().warning(m + " for ignore-items in " + k + " is not modifiable!");
-                                    amtWarnings++;
-                                    continue;
-                                }
-
-                                ignoreItems.add(material);
-                            } catch (IllegalArgumentException e) {
-                                RogueLikeItems.logger().warning(m + " for ignore-items in " + k + " could not be found!");
-                                amtWarnings++;
-                            }
-                        }
-                    }
-                } catch (ClassCastException e) {
-                    RogueLikeItems.logger().warning(Config.IGNORE_ITEMS + " for " + k + " wrongfully declared!");
-                    amtWarnings++;
-                }
+                ignoreItems = validateIgnoreList(k, configurationSection.get(Config.IGNORE_ITEMS.toString()));
             }
 
             boolean toolsAndWeapons = true;
@@ -210,46 +186,44 @@ final public class ConfigUtil {
         configData.setCustomAttributeModifier(customAttributeModifierList);
     }
 
-    private static void validateIgnoreList() {
-        ArrayList<Material> ignoreItemsList = new ArrayList<>();
+    private static List<Material> validateIgnoreList(String k, Object yIgnoreLIst) {
+        List<Material> ignoreItems = new ArrayList<>(List.of());
         try {
-            Object configVal = RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS);
-            if (!(configVal instanceof List)) {
-                RogueLikeItems.logger().warning(Config.IGNORE_ITEMS + " wrongfully declared");
-                amtWarnings++;
-                setIgnoreList(ignoreItemsList);
-                return;
-            }
+            Object yIgnoreItems = yIgnoreLIst == null ? RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS) : yIgnoreLIst;
+            if (yIgnoreItems != null) {
+                List<?> list = (List<?>) yIgnoreItems;
+                for (Object m : list) {
+                    try {
+                        Material material = Material.valueOf(m.toString()
+                                .toUpperCase()
+                                .replace("-", "_")
+                                .replace(" ", "_"));
 
-            List<?> ignoreItemsListConfig = (List<?>) configVal;
+                        if (!ItemType.isModifiable(material)) {
+                            RogueLikeItems.logger().warning(m
+                                    + " in " + Config.IGNORE_ITEMS
+                                    + (k != null ? (" in " + k) : "") + " is not modifiable!"
+                            );
+                            amtWarnings++;
+                            continue;
+                        }
 
-            if (ignoreItemsListConfig.isEmpty()) {
-                setIgnoreList(ignoreItemsList);
-                return;
-            }
-            for (Object item : ignoreItemsListConfig) {
-                try {
-                    Material material = Material.valueOf(item.toString()
-                            .toUpperCase()
-                            .replaceAll(" ", "_")
-                            .replaceAll("-", "_"));
-                    if (!ItemType.isModifiable(material)) {
+                        ignoreItems.add(material);
+                    } catch (IllegalArgumentException e) {
+                        RogueLikeItems.logger().warning(m
+                                + " in " + Config.IGNORE_ITEMS
+                                + (k != null ? (" in " + k) : "") + " could not be found!"
+                        );
                         amtWarnings++;
-                        RogueLikeItems.logger().warning(item + " is not modifiable");
-                        continue;
                     }
-                    ignoreItemsList.add(material);
-                } catch (IllegalArgumentException e) {
-                    amtWarnings++;
-                    RogueLikeItems.logger().warning(item + " is not a valid item");
                 }
             }
-        } catch (IllegalArgumentException e) {
+        } catch (ClassCastException e) {
+            RogueLikeItems.logger().warning(Config.IGNORE_ITEMS + " "
+                    + (k != null ? (" in " + k) : "") + "wrongfully declared!");
             amtWarnings++;
-            RogueLikeItems.logger().warning(Config.IGNORE_ITEMS + " wrongfully declared");
-            return;
         }
-        setIgnoreList(ignoreItemsList);
+        return ignoreItems;
     }
 
     private static boolean validateTag(String key, Object tag, Config config) {
@@ -273,11 +247,11 @@ final public class ConfigUtil {
 
     private static void validateSettings() {
         for (String k : settingKeys) {
-            if (!k.equalsIgnoreCase(ConfigSetting.IGNORE_ITEMS.toString())) {
+            if (!k.equalsIgnoreCase(Config.IGNORE_ITEMS.toString())) {
                 validateTag(RogueLikeItems.config().get(k), k);
                 continue;
             }
-            validateIgnoreList();
+            setIgnoreList(validateIgnoreList(null, null));
         }
     }
 

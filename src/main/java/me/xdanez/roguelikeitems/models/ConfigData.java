@@ -17,7 +17,7 @@ public class ConfigData {
         return CONFIG_DATA;
     }
 
-    private List<Material> ignoreItemList;
+    private List<Material> ignoreItemList = List.of();
     private List<CustomAttributeModifier> customAttributeModifiers = List.of();
 
     public List<CustomAttributeModifier> getCustomAttributeModifiers() {
@@ -32,6 +32,7 @@ public class ConfigData {
         return customAttributeModifiers.stream()
                 .filter(c -> c.attribute() == null).findFirst().orElse(null);
     }
+
     public boolean useCrafting() {
         return RogueLikeItems.config().getBoolean(ConfigSetting.USE_CRAFTING.toString());
     }
@@ -46,6 +47,14 @@ public class ConfigData {
 
     public boolean useMobDrops() {
         return RogueLikeItems.config().getBoolean(ConfigSetting.USE_MOB_DROPS.toString());
+    }
+
+    public boolean useBowMainHandAttack() {
+        return RogueLikeItems.config().getBoolean(ConfigSetting.BOW_MAINHAND_ATTACK.toString());
+    }
+
+    public boolean showAdjustedValues() {
+        return RogueLikeItems.config().getBoolean(ConfigSetting.SHOW_ADJUSTED_VALUES.toString());
     }
 
     public List<Material> getIgnoreItemList() {

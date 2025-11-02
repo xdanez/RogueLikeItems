@@ -1,6 +1,6 @@
 package me.xdanez.roguelikeitems.enums;
 
-public enum Config {
+public enum Config implements ConfigType {
     IGNORE_ITEMS("ignore-items"),
     ACTIVE("active"),
     IN_PERCENT("in-percent"),
@@ -11,11 +11,11 @@ public enum Config {
     USE_ONLY_NATURAL_NUMBERS("use-only-natural-numbers");
 
     private final String key;
+
     Config(String key) {
         this.key = key;
     }
 
-    @Override
     public String toString() {
         return key;
     }
