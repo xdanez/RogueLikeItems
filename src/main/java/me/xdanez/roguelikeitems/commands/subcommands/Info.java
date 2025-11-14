@@ -53,24 +53,24 @@ public class Info extends SubCommand {
         assert source != null;
         TextComponent msg = Component.text(sender instanceof Player ? "" : "\n")
                 .append(separator)
-                .append(getDefaultText("\n" + name))
-                .append(getDefaultText(" by "))
-                .append(getSpecialText(author + "\n"))
-                .append(getDefaultText(description + "\n"))
-                .append(getDefaultText("Version: "))
-                .append(getSpecialText(version + "\n"))
-                .append(getDefaultText("Source: "))
-                .append(getSpecialText(source + "\n").clickEvent(ClickEvent.openUrl(source)))
+                .append(defaultText("\n" + name))
+                .append(defaultText(" by "))
+                .append(specialText(author + "\n"))
+                .append(defaultText(description + "\n"))
+                .append(defaultText("Version: "))
+                .append(specialText(version + "\n"))
+                .append(defaultText("Source: "))
+                .append(specialText(source + "\n").clickEvent(ClickEvent.openUrl(source)))
                 .append(separator);
 
         sender.sendMessage(msg);
     }
 
-    private Component getDefaultText(String text) {
+    private Component defaultText(String text) {
         return Component.text(text).color(TextColor.color(114, 215, 0));
     }
 
-    private Component getSpecialText(String text) {
+    private Component specialText(String text) {
         return Component.text(text).color(TextColor.color(44, 152, 255));
     }
 }

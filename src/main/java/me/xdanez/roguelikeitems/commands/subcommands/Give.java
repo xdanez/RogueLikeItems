@@ -57,8 +57,7 @@ public class Give extends SubCommand {
             suggestions.add("<Item>");
         }
 
-        return CommandUtil.getFilteredOptions(suggestions, args[args.length-1]);
-
+        return CommandUtil.getFilteredOptions(suggestions, args[args.length - 1]);
     }
 
     @Override

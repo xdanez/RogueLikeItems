@@ -27,7 +27,6 @@ final public class AmplifierUtil {
         AttributeModifiersAmplifierUtil.setAmplifiers(item);
     }
 
-
     public static double getRandomAmplifierValue(CustomAttributeModifier cam) {
         boolean naturalNumbers = cam.useOnlyNaturalNumbers();
         int rangeM = naturalNumbers ? 1 : 100;
