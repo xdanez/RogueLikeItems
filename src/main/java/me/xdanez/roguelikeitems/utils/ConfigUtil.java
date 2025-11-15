@@ -201,7 +201,6 @@ final public class ConfigUtil {
             if (range.getFirst() > range.getLast()) {
                 range = range.reversed();
                 RogueLikeItems.logger().warning("Range for " + k + " is reversed.");
-                amtWarnings++;
             }
 
             boolean useOnlyNaturalNumbers;
