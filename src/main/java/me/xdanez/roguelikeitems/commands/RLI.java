@@ -1,8 +1,6 @@
 package me.xdanez.roguelikeitems.commands;
 
-import me.xdanez.roguelikeitems.commands.subcommands.Info;
-import me.xdanez.roguelikeitems.commands.subcommands.Reload;
-import me.xdanez.roguelikeitems.commands.subcommands.Give;
+import me.xdanez.roguelikeitems.commands.subcommands.*;
 import me.xdanez.roguelikeitems.utils.CommandUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -89,7 +87,7 @@ public class RLI implements CommandExecutor, TabCompleter {
                 }
             }
         }
-        return CommandUtil.getFilteredOptions(getOptions(commandSender), args[args.length-1]);
+        return CommandUtil.getFilteredOptions(getOptions(commandSender), args[args.length - 1]);
     }
 
     private String[] getArgsWithoutCommandName(String[] args) {

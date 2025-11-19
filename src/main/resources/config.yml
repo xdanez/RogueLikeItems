@@ -7,7 +7,7 @@
 # in-percent: use percentage values (true) or absolut values (false)
 #             default: true
 # range*: the range of an amplifier.
-#        two numbers in brackets or single number for a fixed value
+#         use from and to key, two numbers in brackets or a single number for a fixed value
 # ignore-items: list of items that should be ignored only for the amplifier
 #               empty by default
 # chance: the chance an amplifier can be applied
@@ -27,7 +27,9 @@
 durability:
   active: true
   in-percent: true
-  range: [ -30, 30 ]
+  range:
+    from: -30
+    to: 30
   chance: 100
   ignore-items: [ ]
   tools-and-weapons: true
@@ -37,7 +39,9 @@ durability:
 attack-damage:
   active: true
   in-percent: true
-  range: [ -30, 30 ]
+  range:
+    from: -30
+    to: 30
   chance: 100
   ignore-items: [ ]
   tools-and-weapons: true
@@ -47,7 +51,9 @@ attack-damage:
 max-health:
   active: true
   in-percent: false
-  range: [ -6, 6 ]
+  range:
+    from: -6
+    to: 6
   chance: 100
   ignore-items: [ ]
   tools-and-weapons: false

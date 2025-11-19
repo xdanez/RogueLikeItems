@@ -144,36 +144,63 @@ final public class ConfigUtil {
             }
 
             List<Float> range = new ArrayList<>(List.of());
+            Object yRange = configurationSection.get(Config.RANGE.toString());
+            if (yRange == null) {
+                RogueLikeItems.logger().severe(k + " does not have required range!");
+                amtErrors++;
+                continue;
+            }
+
             try {
-                Object yRange = configurationSection.get(Config.RANGE.toString());
-                if (yRange == null) {
-                    RogueLikeItems.logger().severe("Range for " + k + " does not have required range!");
-                    amtErrors++;
-                    continue;
-                }
-                if (yRange instanceof List<?>) {
-                    List<?> tempRange = (List<?>) yRange;
-                    if (tempRange.isEmpty()) {
-                        RogueLikeItems.logger().severe("Range for " + k + " is required, but empty!");
-                        amtErrors++;
-                        continue;
-                    }
-                    range.add(Float.parseFloat(tempRange.getFirst().toString()));
-                    range.add(Float.parseFloat(tempRange.getLast().toString()));
+                ConfigurationSection cRange = (ConfigurationSection) yRange;
+                Object from = cRange.get(Config.FROM.toString());
+                Object to = cRange.get(Config.TO.toString());
 
-                    if (range.getFirst() > range.getLast()) {
-                        range = range.reversed();
-                        RogueLikeItems.logger().warning("Range for " + k + " is reversed.");
-                        amtWarnings++;
-                    }
-
-                } else {
-                    range.add(Float.parseFloat(yRange.toString()));
+                if (from != null)
+                    range.add(Float.parseFloat(from.toString()));
+                else {
+                    RogueLikeItems.logger().warning("Missing from-value for range " + k);
+                    amtWarnings++;
                 }
-            } catch (IllegalArgumentException e) {
+                if (to != null)
+                    range.add(Float.parseFloat(to.toString()));
+                else {
+                    RogueLikeItems.logger().warning("Missing to-value for range " + k);
+                    amtWarnings++;
+                }
+            } catch (ClassCastException e) {
+                // old format or single value is used
+            } catch (NumberFormatException e) {
                 RogueLikeItems.logger().severe("Range for " + k + " wrongfully declared!");
                 amtErrors++;
-                return;
+                continue;
+            }
+
+            if (range.isEmpty()) {
+                try {
+                    if (yRange instanceof List<?>) {
+                        RogueLikeItems.logger().warning("Range for " + k + " is using old format. Consider using new format in future.");
+                        List<?> tempRange = (List<?>) yRange;
+                        if (tempRange.isEmpty()) {
+                            RogueLikeItems.logger().severe("Range for " + k + " is required, but empty!");
+                            amtErrors++;
+                            continue;
+                        }
+                        range.add(Float.parseFloat(tempRange.getFirst().toString()));
+                        range.add(Float.parseFloat(tempRange.getLast().toString()));
+                    } else {
+                        range.add(Float.parseFloat(yRange.toString()));
+                    }
+                } catch (IllegalArgumentException e) {
+                    RogueLikeItems.logger().severe("Range for " + k + " wrongfully declared!");
+                    amtErrors++;
+                    return;
+                }
+            }
+
+            if (range.getFirst() > range.getLast()) {
+                range = range.reversed();
+                RogueLikeItems.logger().warning("Range for " + k + " is reversed.");
             }
 
             boolean useOnlyNaturalNumbers;

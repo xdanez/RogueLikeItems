@@ -4,18 +4,7 @@ import me.xdanez.roguelikeitems.models.ConfigData;
 import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlotGroup;
 
-public enum ItemType {
-    ARMOR,
-    WEAPON,
-    TOOL;
-
-    public static ItemType getItemType(Material material) {
-        if (isArmor(material)) return ItemType.ARMOR;
-        if (isWeapon(material)) return ItemType.WEAPON;
-        if (isTool(material)) return ItemType.TOOL;
-        return null;
-    }
-
+public final class ItemType {
     public static boolean isArmor(Material material) {
         String materialStr = material.toString();
         return materialStr.endsWith("_HELMET")
@@ -36,7 +25,7 @@ public enum ItemType {
     public static boolean isWeapon(Material material) {
         String materialStr = material.toString();
         return materialStr.endsWith("_SWORD")
-                || materialStr.endsWith("BOW")
+                || isRanged(material)
                 || material.equals(Material.TRIDENT)
                 || material.equals(Material.MACE);
     }

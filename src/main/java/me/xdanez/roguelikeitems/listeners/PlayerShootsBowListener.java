@@ -22,7 +22,9 @@ public class PlayerShootsBowListener implements Listener {
         if (!(projectile instanceof Arrow)) return;
 
         Arrow arrow = (Arrow) projectile;
-        ItemAttributeModifiers.Entry dmg = bow.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS).modifiers().stream().filter(i -> i.attribute().equals(Attribute.ATTACK_DAMAGE)).findFirst().orElse(null);
+        ItemAttributeModifiers.Entry dmg =
+                bow.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS).modifiers().stream()
+                        .filter(i -> i.attribute().equals(Attribute.ATTACK_DAMAGE)).findFirst().orElse(null);
         if (dmg == null) return;
         double damageAmplifier = dmg.modifier().getAmount();
         double baseDamage = arrow.getDamage();

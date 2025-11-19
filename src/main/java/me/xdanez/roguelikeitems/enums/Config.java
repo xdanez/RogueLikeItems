@@ -1,6 +1,8 @@
 package me.xdanez.roguelikeitems.enums;
 
 public enum Config implements ConfigType {
+    FROM("from"),
+    TO("to"),
     IGNORE_ITEMS("ignore-items"),
     ACTIVE("active"),
     IN_PERCENT("in-percent"),
