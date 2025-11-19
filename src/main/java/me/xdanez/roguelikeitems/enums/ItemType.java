@@ -25,7 +25,7 @@ public final class ItemType {
     public static boolean isWeapon(Material material) {
         String materialStr = material.toString();
         return materialStr.endsWith("_SWORD")
-                || materialStr.endsWith("BOW")
+                || isRanged(material)
                 || material.equals(Material.TRIDENT)
                 || material.equals(Material.MACE);
     }
