@@ -17,7 +17,17 @@ public class VillagerAcquireTradeListener implements Listener {
         MerchantRecipe trade = e.getRecipe();
         ItemStack item = trade.getResult();
         AmplifierUtil.setAmplifiers(item);
-        MerchantRecipe newTrade = new MerchantRecipe(item, trade.getMaxUses());
+        MerchantRecipe newTrade = new MerchantRecipe(
+                item,
+                trade.getUses(),
+                trade.getMaxUses(),
+                trade.hasExperienceReward(),
+                trade.getVillagerExperience(),
+                trade.getPriceMultiplier(),
+                trade.getDemand(),
+                trade.getSpecialPrice(),
+                trade.shouldIgnoreDiscounts()
+        );
         newTrade.setIngredients(trade.getIngredients());
         e.setRecipe(newTrade);
     }
