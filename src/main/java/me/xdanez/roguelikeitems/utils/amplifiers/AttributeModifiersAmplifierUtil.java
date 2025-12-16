@@ -156,12 +156,7 @@ final public class AttributeModifiersAmplifierUtil {
                 double base = ogInputEntry.modifier().getAmount();
                 double modifiedValue = e.modifier().getAmount();
                 boolean inPercent = input.getItemMeta().getPersistentDataContainer().get(key(e.attribute()), PersistentDataType.BOOLEAN);
-                double amplifier;
-                if (inPercent) {
-                    amplifier = (modifiedValue / base) - 1;
-                } else {
-                    amplifier = modifiedValue - base;
-                }
+                double amplifier = inPercent ? (modifiedValue / base) - 1 : modifiedValue - base;
 
                 if (ogResEntry != null) base++;
 
