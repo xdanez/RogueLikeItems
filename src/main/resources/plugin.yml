@@ -10,4 +10,12 @@ commands:
   rli:
     description: "RogueLikeItems commands"
     aliases:
-    - roguelikeitems
+      - roguelikeitems
+
+permissions:
+  roguelikeitems.reload:
+    description: reload command
+    default: op
+  roguelikeitems.give:
+    description: give command
+    default: op
