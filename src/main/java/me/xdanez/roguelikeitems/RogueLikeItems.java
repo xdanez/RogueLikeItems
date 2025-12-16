@@ -35,10 +35,6 @@ public final class RogueLikeItems extends JavaPlugin {
         getCommand("rli").setExecutor(new RLI());
     }
 
-    @Override
-    public void onDisable() {
-    }
-
     public static Logger logger() {
         return plugin.getLogger();
     }
