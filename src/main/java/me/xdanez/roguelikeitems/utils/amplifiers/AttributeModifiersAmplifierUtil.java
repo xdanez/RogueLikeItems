@@ -126,7 +126,7 @@ final public class AttributeModifiersAmplifierUtil {
     }
 
     private static NamespacedKey key(Attribute attribute) {
-        return new NamespacedKey(RogueLikeItems.plugin,
+        return new NamespacedKey(RogueLikeItems.plugin(),
                 attribute.key().toString()
                         .replace(":", "_") + "_amplifier");
     }

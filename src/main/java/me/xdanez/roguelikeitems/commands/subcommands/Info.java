@@ -1,5 +1,6 @@
 package me.xdanez.roguelikeitems.commands.subcommands;
 
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.commands.SubCommand;
 import net.kyori.adventure.text.Component;
@@ -7,7 +8,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,24 +41,20 @@ public class Info extends SubCommand {
 
     @Override
     public void execute(@NotNull CommandSender sender, String[] args) {
-        Configuration pluginYML = RogueLikeItems.getPluginYML();
+        PluginMeta pm = RogueLikeItems.plugin().getPluginMeta();
         TextComponent separator = Component.text("--------------------")
                 .color(TextColor.color(81, 81, 81));
-        String name = pluginYML.getString("name");
-        String version = pluginYML.getString("version");
-        String author = pluginYML.getString("author");
-        String source = pluginYML.getString("source");
-        String description = pluginYML.getString("description");
+        String source = pm.getWebsite();
 
         assert source != null;
         TextComponent msg = Component.text(sender instanceof Player ? "" : "\n")
                 .append(separator)
-                .append(defaultText("\n" + name))
+                .append(defaultText("\n" + pm.getName()))
                 .append(defaultText(" by "))
-                .append(specialText(author + "\n"))
-                .append(defaultText(description + "\n"))
+                .append(specialText(String.join("", pm.getAuthors()) + "\n"))
+                .append(defaultText(pm.getDescription() + "\n"))
                 .append(defaultText("Version: "))
-                .append(specialText(version + "\n"))
+                .append(specialText(pm.getVersion() + "\n"))
                 .append(defaultText("Source: "))
                 .append(specialText(source + "\n").clickEvent(ClickEvent.openUrl(source)))
                 .append(separator);
