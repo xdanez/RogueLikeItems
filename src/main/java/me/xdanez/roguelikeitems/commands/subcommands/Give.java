@@ -22,12 +22,12 @@ import java.util.stream.Stream;
 public class Give extends SubCommand {
     @Override
     public String getName() {
-        return "Give";
+        return "give";
     }
 
     @Override
     public String getSyntax() {
-        return "/rli " + getName().toLowerCase() + " <Player> <Item>";
+        return "/rli " + getName() + " <Player> <Item>";
     }
 
     @Override
@@ -63,9 +63,6 @@ public class Give extends SubCommand {
 
     @Override
     public void execute(@NotNull CommandSender sender, String[] args) {
-        boolean hasPermission = CommandUtil.checkPermission(sender, getPermission(), true);
-        if (!hasPermission) return;
-
         if (args.length != 2) {
             sender.sendMessage(getSyntax());
             return;

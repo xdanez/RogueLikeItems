@@ -16,17 +16,17 @@ import java.util.List;
 public class Info extends SubCommand {
     @Override
     public String getName() {
-        return "Info";
+        return "info";
     }
 
     @Override
     public String getSyntax() {
-        return "/rli " + getName().toLowerCase();
+        return "/rli " + getName();
     }
 
     @Override
     public String getDescription() {
-        return "Show info about plugin";
+        return "Show plugin info";
     }
 
     @Override

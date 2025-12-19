@@ -3,7 +3,8 @@ package me.xdanez.roguelikeitems.commands;
 import me.xdanez.roguelikeitems.commands.subcommands.*;
 import me.xdanez.roguelikeitems.utils.CommandUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,20 +25,21 @@ public class RLI implements CommandExecutor, TabCompleter {
             new Info()
     };
 
-    private final String SEPARATOR = ">------------------------------<";
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender,
                              @NotNull Command command,
                              @NotNull String s,
-                             @NotNull String[] args) {
+                             String[] args) {
         if (args.length == 0) {
             sendHelpMessage(commandSender);
             return false;
         }
+
         String subCommandName = args[0];
         for (SubCommand subCommand : subCommands) {
             if (subCommand.getName().equalsIgnoreCase(subCommandName)) {
+                if (!CommandUtil.checkPermission(commandSender, subCommand.getPermission(), true))
+                    return false;
                 subCommand.execute(commandSender, getArgsWithoutCommandName(args));
                 return false;
             }
@@ -47,19 +49,27 @@ public class RLI implements CommandExecutor, TabCompleter {
     }
 
     private void sendHelpMessage(CommandSender sender) {
-        TextComponent helpMessage = Component.text((sender instanceof Player ? "" : "\n") + SEPARATOR + "\n"
-                + getCommands()
-                + SEPARATOR);
+        Component helpMessage = Component.text((sender instanceof Player ? "" : "\n") + ">---RogueLikeItems Commands---<" + "\n")
+                .append(getCommands(sender)).append(Component.text(">-----------------------------<"));
         sender.sendMessage(helpMessage);
     }
 
-    private String getCommands() {
-        StringBuilder commands = new StringBuilder();
+    private Component getCommands(CommandSender sender) {
+        Component commands = Component.empty();
         for (SubCommand subCommand : subCommands) {
-            commands.append(subCommand.getSyntax()).append(": ").append(subCommand.getDescription());
-            commands.append("\n");
+            if (!CommandUtil.checkPermission(sender, subCommand.getPermission(), false)) continue;
+            commands = commands.append(commandLine(subCommand));
         }
-        return commands.toString();
+        return commands;
+    }
+
+    private Component commandLine(SubCommand command) {
+        return Component.empty()
+                .append(Component.text(command.getSyntax())
+                        .color(TextColor.color(0xFFD700))
+                        .clickEvent(ClickEvent.suggestCommand("/rli " + command.getName().toLowerCase())))
+                .append(Component.text(": " + command.getDescription() + "\n")
+                        .color(TextColor.color(0x888888)));
     }
 
     private List<String> getOptions(CommandSender sender) {
@@ -76,7 +86,7 @@ public class RLI implements CommandExecutor, TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender,
                                                 @NotNull Command command,
                                                 @NotNull String s,
-                                                @NotNull String[] args) {
+                                                String[] args) {
         if (args.length >= 2) {
             for (SubCommand subCommand : subCommands) {
                 if (subCommand.getName().equalsIgnoreCase(args[0])) {
