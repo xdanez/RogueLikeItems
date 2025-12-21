@@ -99,9 +99,11 @@ final public class AttributeModifiersAmplifierUtil {
                         Component.text((dmgOrSpd ? " " : "")
                                         + (amount > 0 && !attribute.equals(Attribute.ATTACK_DAMAGE) && !attribute.equals(Attribute.ATTACK_SPEED) ? "+" : "")
                                         + (Math.round((amount + (showAdjustedValues ? (attribute.equals(Attribute.ATTACK_DAMAGE) ? 1 : attribute.equals(Attribute.ATTACK_SPEED) ? 4 : 0) : 0)) * 100.0) / 100.0)
-                                        + " (" + (amplifier > 0 ? "+" : "")
+                                        + (amplifier != 0
+                                        ? " (" + (amplifier > 0 ? "+" : "")
                                         + (inPercent ? ((Math.round(amplifier * 100)) + "%") : Math.round(amplifier))
-                                        + (inPercent && showAdjustedValues ? " / " + Math.round(extra * 100.0) / 100.0 : "") + ") ")
+                                        + (inPercent && showAdjustedValues ? " / " + Math.round(extra * 100.0) / 100.0 : "") + ") "
+                                        : " "))
                                 .append(Component.translatable(attribute.translationKey()))
                                 .color(TextColor.color(attribute.getSentiment().equals(Attribute.Sentiment.NEUTRAL) ? NEUTRAL
                                         : dmgOrSpd ? GREEN
