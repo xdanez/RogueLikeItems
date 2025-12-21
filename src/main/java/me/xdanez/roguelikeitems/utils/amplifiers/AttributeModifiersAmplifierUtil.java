@@ -43,18 +43,13 @@ final public class AttributeModifiersAmplifierUtil {
             CustomAttributeModifier cam = camList.stream()
                     .filter(c -> c.attribute() == e.attribute()).findFirst().orElse(null);
 
-            if (cam != null) {
-                if (e.attribute().equals(cam.attribute())
-                        && cam.attribute().equals(e.attribute())
-                        && ConfigUtil.useAmplifier(cam, material)) {
-                    double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
-                    double base = e.modifier().getAmount();
-                    double extra = cam.inPercent() ? base * amplifier : amplifier;
-                    double amount = base + extra;
-                    addCustomModifier(modifiedAttributes, amount, amplifier, extra, cam.attribute(), cam.inPercent(), group, item);
-                    continue;
-                }
-
+            if (cam != null && e.attribute().equals(cam.attribute()) && ConfigUtil.useAmplifier(cam, material)) {
+                double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
+                double base = e.modifier().getAmount();
+                double extra = cam.inPercent() ? base * amplifier : amplifier;
+                double amount = base + extra;
+                addCustomModifier(modifiedAttributes, amount, amplifier, extra, cam.attribute(), cam.inPercent(), group, item);
+                continue;
             }
             modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
         }
