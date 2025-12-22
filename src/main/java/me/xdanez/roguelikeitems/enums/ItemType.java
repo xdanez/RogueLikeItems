@@ -71,7 +71,7 @@ public final class ItemType {
 
         String materialStr = material.toString();
         if (materialStr.endsWith("_HELMET")) return EquipmentSlotGroup.HEAD;
-        if (materialStr.endsWith("_CHESTPLATE")) return EquipmentSlotGroup.CHEST;
+        if (materialStr.endsWith("_CHESTPLATE") || material.equals(Material.ELYTRA)) return EquipmentSlotGroup.CHEST;
         if (materialStr.endsWith("_LEGGINGS")) return EquipmentSlotGroup.LEGS;
         if (materialStr.endsWith("_BOOTS")) return EquipmentSlotGroup.FEET;
 
