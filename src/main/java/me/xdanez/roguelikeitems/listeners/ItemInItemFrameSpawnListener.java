@@ -1,7 +1,6 @@
 package me.xdanez.roguelikeitems.listeners;
 
 import me.xdanez.roguelikeitems.utils.AmplifierUtil;
-import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -15,9 +14,7 @@ public class ItemInItemFrameSpawnListener implements Listener {
     @EventHandler
     public void onItemInItemFrameSpawn(ChunkLoadEvent e) {
         if (!e.isNewChunk()) return;
-        Chunk chunk = e.getChunk();
-        Entity[] entities = chunk.getEntities();
-        for (Entity entity : entities) {
+        for (Entity entity : e.getChunk().getEntities()) {
             if (!entity.getType().equals(EntityType.ITEM_FRAME)) continue;
             ItemFrame itemFrame = (ItemFrame) entity;
             ItemStack item = itemFrame.getItem();
