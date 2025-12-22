@@ -5,6 +5,7 @@ public enum ConfigSetting implements ConfigType {
     USE_MOB_DROPS("use-mob-drops"),
     USE_VILLAGER_TRADES("use-villager-trades"),
     USE_CRAFTING("use-crafting"),
+    USE_BARTERING("use-bartering"),
     IGNORE_ITEMS("ignore-items"),
     BOW_MAINHAND_ATTACK("bow-mainhand-attack"),
     SHOW_ADJUSTED_VALUES("show-adjusted-values");

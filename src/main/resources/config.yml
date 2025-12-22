@@ -78,6 +78,10 @@ use-villager-trades: true
 # default: true
 use-crafting: true
 
+# items bartered from piglins being modified
+# default: true
+use-bartering: true
+
 # attributes for attack damage and speed on cross/bows will only be for mainhand instead of simply holding it
 # default: true
 bow-mainhand-attack: true
