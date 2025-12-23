@@ -14,9 +14,11 @@ import org.bukkit.inventory.MerchantRecipe;
 
 public class GeneralEventListener implements Listener {
 
+    ConfigData config = ConfigData.getConfigData();
+
     @EventHandler
     public void onPiglinBartering(PiglinBarterEvent e) {
-        if (!ConfigData.getConfigData().useBartering()) return;
+        if (!config.useBartering()) return;
 
         for (ItemStack item : e.getOutcome()) {
             AmplifierUtil.setAmplifiers(item);
@@ -37,7 +39,7 @@ public class GeneralEventListener implements Listener {
 
     @EventHandler
     public void onLootGenerating(LootGenerateEvent e) {
-        if (!ConfigData.getConfigData().useLootTables()) return;
+        if (!config.useLootTables()) return;
 
         for (ItemStack item : e.getLoot()) {
             AmplifierUtil.setAmplifiers(item);
@@ -46,7 +48,7 @@ public class GeneralEventListener implements Listener {
 
     @EventHandler
     public void onVillagerAcquireTrade(VillagerAcquireTradeEvent e) {
-        if (!ConfigData.getConfigData().useVillagerTrades()) return;
+        if (!config.useVillagerTrades()) return;
 
         MerchantRecipe trade = e.getRecipe();
         ItemStack item = trade.getResult();
@@ -68,7 +70,7 @@ public class GeneralEventListener implements Listener {
 
     @EventHandler
     public void onMobSpawn(CreatureSpawnEvent e) {
-        if (!ConfigData.getConfigData().useMobDrops()) return;
+        if (!config.useMobDrops()) return;
 
         EntityEquipment entityEquipment = e.getEntity().getEquipment();
         if (entityEquipment == null) return;
