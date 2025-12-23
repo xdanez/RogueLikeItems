@@ -29,14 +29,16 @@ final public class AmplifierUtil {
 
     public static double getRandomAmplifierValue(CustomAttributeModifier cam) {
         boolean naturalNumbers = cam.useOnlyNaturalNumbers();
-        int rangeM = naturalNumbers ? 1 : 100;
-        int divider = naturalNumbers ? 100 : 10000;
+        float from = cam.from();
+        float to = cam.to();
+        int rangeM = naturalNumbers ? 1 : 1000;
+        int divider = naturalNumbers ? 100 : 100000;
         double absolute = cam.inPercent() ? 1 : 100;
         if (!naturalNumbers)
             return (double) ThreadLocalRandom.current()
-                    .nextFloat(cam.from() * rangeM, cam.to() * rangeM + 1) / divider * absolute;
+                    .nextFloat(from * rangeM, to * rangeM + 1) / divider * absolute;
         return (double) ThreadLocalRandom.current()
-                .nextInt((int) cam.from() * rangeM, (int) cam.to() * rangeM + 1) / divider * absolute;
+                .nextInt((int) from * rangeM, (int) to * rangeM + 1) / divider * absolute;
     }
 
     public static boolean hasAnyAmplifier(ItemStack item) {

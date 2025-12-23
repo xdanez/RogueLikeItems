@@ -3,7 +3,6 @@ package me.xdanez.roguelikeitems.commands.subcommands;
 import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.commands.SubCommand;
-import me.xdanez.roguelikeitems.utils.CommandUtil;
 import me.xdanez.roguelikeitems.utils.ConfigUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -16,12 +15,12 @@ import java.util.List;
 public class Reload extends SubCommand {
     @Override
     public String getName() {
-        return "Reload";
+        return "reload";
     }
 
     @Override
     public String getSyntax() {
-        return "/rli reload";
+        return "/rli " + getName();
     }
 
     @Override
@@ -41,9 +40,6 @@ public class Reload extends SubCommand {
 
     @Override
     public void execute(@NotNull CommandSender sender, String[] args) {
-        boolean hasPermission = CommandUtil.checkPermission(sender, getPermission(), true);
-        if (!hasPermission) return;
-
         RogueLikeItems.getPlugin(RogueLikeItems.class).reloadConfig();
         Pair<Integer, Integer> validConfig = ConfigUtil.validateConfig();
         int amtWarning = validConfig.left();

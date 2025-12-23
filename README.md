@@ -1,115 +1,31 @@
-# RogueLikeItems 💫
+# RogueLikeItems ⚒️
 
-A simple Plugin adding random attribute modifiers for items!
+Add random attribute modifiers to items.
 
 ![Iron sword with random amplifiers](https://cdn.modrinth.com/data/cached_images/5b4bb85d6488e64c33d8544d89e20f7225fbdef1.png)
 
-## features 🖇️
-
-### Use any attribute modifier 💯
-With any setting you want! <br>
 A list of all attributes can be found here: https://minecraft.wiki/w/Attribute#Attributes <br>
-In addition it is also possible to change the max-durability of items with the key "durability"!
-
-### applicable on different scenarios
-- crafting 👩‍🔧
-- trading 🔄
-- loot tables 🍀
-
-## highly customizable config ✨
-
-```yml
-## ATTRIBUTE AMPLIFIERS ##
-
-# general attribute settings
-# *..required
-# active: enable (true) or disable (false) an amplifier
-#         default: true
-# in-percent: use percentage values (true) or absolut values (false)
-#             default: true
-# range*: the range of an amplifier.
-#        two numbers in brackets or single number for a fixed value
-# ignore-items: list of items that should be ignored only for the amplifier
-#               empty by default
-# chance: the chance an amplifier can be applied
-#         number in percent between 1 and 100
-#         default: 100
-# tools-and-weapons: amplifier being applied on tools and weapons (true/false)
-#                    default: true
-# armor-and-shield: amplifier being applied on armor and shield (true/false)
-#                   default: true
-# use-only-natural-numbers: range values will only use natural numbers with no floating points (true/false)
-#                           default: true
-#                           note: if the range contains a float this will be overwritten to false
-
-durability:
-  active: true
-  in-percent: true
-  range: [ -30, 30 ]
-  chance: 100
-  ignore-items: [ ]
-  tools-and-weapons: true
-  armor-and-shield: true
-  use-only-natural-numbers: true
-
-attack-damage:
-  active: true
-  in-percent: true
-  range: [ -30, 30 ]
-  chance: 100
-  ignore-items: [ ]
-  tools-and-weapons: true
-  armor-and-shield: false
-  use-only-natural-numbers: true
-
-max-health:
-  active: true
-  in-percent: false
-  range: [ -6, 6 ]
-  chance: 100
-  ignore-items: [ ]
-  tools-and-weapons: false
-  armor-and-shield: true
-  use-only-natural-numbers: true
-
-## SETTINGS ##
-
-# items from loot tables being modified
-# default: true
-use-loot-tables: true
-
-# items from mob drops being modified
-# default: true
-use-mob-drops: true
-
-# items traded from villager being modified
-# default: true
-use-villager-trades: true
-
-# items crafted being modified
-# default: true
-use-crafting: true
-
-# attributes for attack damage and speed on cross/bows will only be for mainhand instead of simply holding it
-# default: true
-bow-mainhand-attack: true
-
-# by default Minecraft shows the adjusted value for attack damage and speed
-# the value for attack damage is always +1 while attack speed +4
-# default: true
-# note: These adjustments only work for default values.
-#       If your server uses different default values the adjustments from the plugin could be wrong.
-#       It is recommended to change this setting to false if that is the case.
-#       This only changes the displayed text, not the value itself!
-show-adjusted-values: true
-
-# ignore items for all attributes
-# empty by default
-ignore-items: [ ]
-```
+It is also possible to change the max-durability of items with the key "durability"!
+ 
+**use in different scenarios**
+- crafting 
+- mob drops
+- loot tables
+- villager trading
+- etc.
 
 ## commands 💬
 
 **rli reload**: Reload config  <br>
 **rli give < Player > < Item >**: Give an item with random modifiers to a player  <br>
-**rli info**: Show info about plugin
+**rli info**: Show plugin info
+
+## permissions 🔑
+
+**roguelikeitems.reload**: reload command <br>
+**roguelikeitems.give**: give command
+
+## compatibility 🧩
+
+plugin version: 1.3.2 <br>
+Paper: 1.21.9 - 1.21.11 

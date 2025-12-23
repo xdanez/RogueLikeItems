@@ -43,18 +43,13 @@ final public class AttributeModifiersAmplifierUtil {
             CustomAttributeModifier cam = camList.stream()
                     .filter(c -> c.attribute() == e.attribute()).findFirst().orElse(null);
 
-            if (cam != null) {
-                if (e.attribute().equals(cam.attribute())
-                        && cam.attribute().equals(e.attribute())
-                        && ConfigUtil.useAmplifier(cam, material)) {
-                    double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
-                    double base = e.modifier().getAmount();
-                    double extra = cam.inPercent() ? base * amplifier : amplifier;
-                    double amount = base + extra;
-                    addCustomModifier(modifiedAttributes, amount, amplifier, extra, cam.attribute(), cam.inPercent(), group, item);
-                    continue;
-                }
-
+            if (cam != null && e.attribute().equals(cam.attribute()) && ConfigUtil.useAmplifier(cam, material)) {
+                double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
+                double base = e.modifier().getAmount();
+                double extra = cam.inPercent() ? base * amplifier : amplifier;
+                double amount = base + extra;
+                addCustomModifier(modifiedAttributes, amount, amplifier, extra, cam.attribute(), cam.inPercent(), group, item);
+                continue;
             }
             modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
         }
@@ -99,9 +94,11 @@ final public class AttributeModifiersAmplifierUtil {
                         Component.text((dmgOrSpd ? " " : "")
                                         + (amount > 0 && !attribute.equals(Attribute.ATTACK_DAMAGE) && !attribute.equals(Attribute.ATTACK_SPEED) ? "+" : "")
                                         + (Math.round((amount + (showAdjustedValues ? (attribute.equals(Attribute.ATTACK_DAMAGE) ? 1 : attribute.equals(Attribute.ATTACK_SPEED) ? 4 : 0) : 0)) * 100.0) / 100.0)
-                                        + " (" + (amplifier > 0 ? "+" : "")
+                                        + (amplifier != 0
+                                        ? " (" + (amplifier > 0 ? "+" : "")
                                         + (inPercent ? ((Math.round(amplifier * 100)) + "%") : Math.round(amplifier))
-                                        + (inPercent && showAdjustedValues ? " / " + Math.round(extra * 100.0) / 100.0 : "") + ") ")
+                                        + (inPercent && showAdjustedValues ? " / " + Math.round(extra * 100.0) / 100.0 : "") + ") "
+                                        : " "))
                                 .append(Component.translatable(attribute.translationKey()))
                                 .color(TextColor.color(attribute.getSentiment().equals(Attribute.Sentiment.NEUTRAL) ? NEUTRAL
                                         : dmgOrSpd ? GREEN
@@ -126,7 +123,7 @@ final public class AttributeModifiersAmplifierUtil {
     }
 
     private static NamespacedKey key(Attribute attribute) {
-        return new NamespacedKey(RogueLikeItems.plugin,
+        return new NamespacedKey(RogueLikeItems.plugin(),
                 attribute.key().toString()
                         .replace(":", "_") + "_amplifier");
     }
@@ -156,12 +153,7 @@ final public class AttributeModifiersAmplifierUtil {
                 double base = ogInputEntry.modifier().getAmount();
                 double modifiedValue = e.modifier().getAmount();
                 boolean inPercent = input.getItemMeta().getPersistentDataContainer().get(key(e.attribute()), PersistentDataType.BOOLEAN);
-                double amplifier;
-                if (inPercent) {
-                    amplifier = (modifiedValue / base) - 1;
-                } else {
-                    amplifier = modifiedValue - base;
-                }
+                double amplifier = inPercent ? (modifiedValue / base) - 1 : modifiedValue - base;
 
                 if (ogResEntry != null) base++;
 

@@ -15,7 +15,7 @@ public final class ItemType {
     }
 
     public static boolean isPetArmor(Material material) {
-        return material.toString().endsWith("_HORSE_ARMOR") || material.equals(Material.WOLF_ARMOR);
+        return material.toString().endsWith("_ARMOR");
     }
 
     public static boolean isRanged(Material material) {
@@ -25,6 +25,7 @@ public final class ItemType {
     public static boolean isWeapon(Material material) {
         String materialStr = material.toString();
         return materialStr.endsWith("_SWORD")
+                || materialStr.endsWith("_SPEAR")
                 || isRanged(material)
                 || material.equals(Material.TRIDENT)
                 || material.equals(Material.MACE);
@@ -70,7 +71,7 @@ public final class ItemType {
 
         String materialStr = material.toString();
         if (materialStr.endsWith("_HELMET")) return EquipmentSlotGroup.HEAD;
-        if (materialStr.endsWith("_CHESTPLATE")) return EquipmentSlotGroup.CHEST;
+        if (materialStr.endsWith("_CHESTPLATE") || material.equals(Material.ELYTRA)) return EquipmentSlotGroup.CHEST;
         if (materialStr.endsWith("_LEGGINGS")) return EquipmentSlotGroup.LEGS;
         if (materialStr.endsWith("_BOOTS")) return EquipmentSlotGroup.FEET;
 

@@ -4,7 +4,7 @@
 # *..required
 # active: enable (true) or disable (false) an amplifier
 #         default: true
-# in-percent: use percentage values (true) or absolut values (false)
+# in-percent: use percentage values (true) or absolute values (false)
 #             default: true
 # range*: the range of an amplifier.
 #         use from and to key, two numbers in brackets or a single number for a fixed value
@@ -77,6 +77,14 @@ use-villager-trades: true
 # items crafted being modified
 # default: true
 use-crafting: true
+
+# items bartered from piglins being modified
+# default: true
+use-bartering: true
+
+# items from vaults being modified
+# default: true
+use-vault: true
 
 # attributes for attack damage and speed on cross/bows will only be for mainhand instead of simply holding it
 # default: true

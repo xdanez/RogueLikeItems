@@ -3,11 +3,19 @@ version: '${project.version}'
 main: me.xdanez.roguelikeitems.RogueLikeItems
 api-version: '1.21.9'
 author: xDaneZ
-source: https://github.com/xdanez/RogueLikeItems
-description: Paper Plugin adding random attribute modifiers for items
+website: https://github.com/xdanez/RogueLikeItems
+description: Add random attribute modifiers to items
 
 commands:
   rli:
     description: "RogueLikeItems commands"
     aliases:
-    - roguelikeitems
+      - roguelikeitems
+
+permissions:
+  roguelikeitems.reload:
+    description: reload command
+    default: op
+  roguelikeitems.give:
+    description: give command
+    default: op

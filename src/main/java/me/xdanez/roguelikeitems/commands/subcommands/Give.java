@@ -16,17 +16,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
 
 // TODO: modifiers
 public class Give extends SubCommand {
     @Override
     public String getName() {
-        return "Give";
+        return "give";
     }
 
     @Override
     public String getSyntax() {
-        return "/rli " + getName().toLowerCase() + " <Player> <Item>";
+        return "/rli " + getName() + " <Player> <Item>";
     }
 
     @Override
@@ -54,7 +55,7 @@ public class Give extends SubCommand {
         }
 
         if (args.length == 2) {
-            suggestions.add("<Item>");
+            Stream.of(Material.values()).filter(ItemType::isModifiable).forEach(m -> suggestions.add(m.key().toString()));
         }
 
         return CommandUtil.getFilteredOptions(suggestions, args[args.length - 1]);
@@ -62,9 +63,6 @@ public class Give extends SubCommand {
 
     @Override
     public void execute(@NotNull CommandSender sender, String[] args) {
-        boolean hasPermission = CommandUtil.checkPermission(sender, getPermission(), true);
-        if (!hasPermission) return;
-
         if (args.length != 2) {
             sender.sendMessage(getSyntax());
             return;
@@ -92,8 +90,7 @@ public class Give extends SubCommand {
             }
             case "@R":
             case "@r": {
-                int randomIndex = ThreadLocalRandom.current().nextInt(0, playerList.size());
-                playersToGive.add(playerList.get(randomIndex));
+                playersToGive.add(playerList.get(ThreadLocalRandom.current().nextInt(0, playerList.size())));
                 break;
             }
             default: {
@@ -111,7 +108,7 @@ public class Give extends SubCommand {
         Material material;
         String providedMaterial = args[1];
         try {
-            material = Material.valueOf(providedMaterial.toUpperCase());
+            material = Material.valueOf(providedMaterial.replaceAll("(?i)minecraft:", "").toUpperCase());
         } catch (IllegalArgumentException e) {
             sender.sendMessage(
                     Component.text(providedMaterial + " is no valid item").color(TextColor.color(255, 0, 0))
@@ -120,7 +117,7 @@ public class Give extends SubCommand {
         }
         if (!ItemType.isModifiable(material)) {
             sender.sendMessage(
-                    Component.text(material + " can not be modified").color(TextColor.color(255, 0, 0))
+                    Component.text(providedMaterial + " can not be modified").color(TextColor.color(255, 0, 0))
             );
             return;
         }
