@@ -2,17 +2,13 @@ package me.xdanez.roguelikeitems.listeners;
 
 import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.utils.AmplifierUtil;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Monster;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PiglinBarterEvent;
-import org.bukkit.event.entity.VillagerAcquireTradeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.LootGenerateEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 
@@ -71,11 +67,24 @@ public class GeneralEventListener implements Listener {
     }
 
     @EventHandler
-    public void onMobDeath(EntityDeathEvent e) {
+    public void onMobSpawn(CreatureSpawnEvent e) {
         if (!ConfigData.getConfigData().useMobDrops()) return;
-        if (!(e.getEntity() instanceof Monster)) return;
-        for (ItemStack item : e.getDrops()) {
+
+        EntityEquipment entityEquipment = e.getEntity().getEquipment();
+        if (entityEquipment == null) return;
+
+        ItemStack mainHand = entityEquipment.getItemInMainHand();
+        ItemStack[] armor = entityEquipment.getArmorContents();
+        ItemStack offHand = entityEquipment.getItemInOffHand();
+
+        AmplifierUtil.setAmplifiers(mainHand);
+        AmplifierUtil.setAmplifiers(offHand);
+        for (ItemStack item : armor) {
             AmplifierUtil.setAmplifiers(item);
         }
+
+        entityEquipment.setItemInMainHand(mainHand);
+        entityEquipment.setItemInOffHand(offHand);
+        entityEquipment.setArmorContents(armor);
     }
 }
