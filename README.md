@@ -12,6 +12,7 @@ It is also possible to change the max-durability of items with the key "durabili
 - mob drops
 - loot tables
 - villager trading
+- etc.
 
 ## commands 💬
 
