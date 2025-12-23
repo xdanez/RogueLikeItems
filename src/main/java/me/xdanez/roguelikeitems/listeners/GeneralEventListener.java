@@ -2,9 +2,11 @@ package me.xdanez.roguelikeitems.listeners;
 
 import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.utils.AmplifierUtil;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDispenseLootEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.LootGenerateEvent;
@@ -88,5 +90,15 @@ public class GeneralEventListener implements Listener {
         entityEquipment.setItemInMainHand(mainHand);
         entityEquipment.setItemInOffHand(offHand);
         entityEquipment.setArmorContents(armor);
+    }
+
+    @EventHandler
+    public void onPlayerOpeningVault(BlockDispenseLootEvent e) {
+        if (!e.getBlock().getType().equals(Material.VAULT)) return;
+        if (!config.useVault()) return;
+
+        for (ItemStack item : e.getDispensedLoot()) {
+            AmplifierUtil.setAmplifiers(item);
+        }
     }
 }

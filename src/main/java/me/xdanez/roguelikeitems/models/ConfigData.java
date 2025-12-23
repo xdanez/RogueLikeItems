@@ -53,6 +53,10 @@ public class ConfigData {
         return RogueLikeItems.config().getBoolean(ConfigSetting.USE_BARTERING.toString());
     }
 
+    public boolean useVault() {
+        return RogueLikeItems.config().getBoolean(ConfigSetting.USE_VAULT.toString());
+    }
+
     public boolean useBowMainHandAttack() {
         return RogueLikeItems.config().getBoolean(ConfigSetting.BOW_MAINHAND_ATTACK.toString());
     }
