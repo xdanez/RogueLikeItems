@@ -76,7 +76,7 @@ public class Give extends SubCommand {
             case "@P":
             case "@p": {
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage(Component.text("Player name needed")
+                    sender.sendMessage(Component.text("Player name required")
                             .color(TextColor.color(255, 0, 0)));
                     return;
                 }
@@ -125,7 +125,7 @@ public class Give extends SubCommand {
 
         AmplifierUtil.setAmplifiers(item);
 
-        playersToGive.forEach(player -> player.getInventory().addItem(item));
+        playersToGive.forEach(player -> player.give(item));
         String name = playersToGive.size() > 1 ? String.valueOf(playersToGive.size()) : playersToGive.get(0).getName();
         sender.sendMessage(
                 Component.text("Gave ")
