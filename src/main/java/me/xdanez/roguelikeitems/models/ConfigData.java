@@ -61,6 +61,10 @@ public class ConfigData {
         return RogueLikeItems.config().getBoolean(ConfigSetting.BOW_MAINHAND_ATTACK.toString());
     }
 
+    public boolean modifyProjectileDamage() {
+        return RogueLikeItems.config().getBoolean(ConfigSetting.MODIFY_PROJECTILE_DAMAGE.toString());
+    }
+
     public boolean showAdjustedValues() {
         return RogueLikeItems.config().getBoolean(ConfigSetting.SHOW_ADJUSTED_VALUES.toString());
     }

@@ -9,6 +9,7 @@ public enum ConfigSetting implements ConfigType {
     USE_VAULT("use-vault"),
     IGNORE_ITEMS("ignore-items"),
     BOW_MAINHAND_ATTACK("bow-mainhand-attack"),
+    MODIFY_PROJECTILE_DAMAGE("modify-projectile-damage"),
     SHOW_ADJUSTED_VALUES("show-adjusted-values");
 
     private final String key;

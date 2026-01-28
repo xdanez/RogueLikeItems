@@ -90,6 +90,10 @@ use-vault: true
 # default: true
 bow-mainhand-attack: true
 
+# attack damage on bows modifying projectile damage
+# default: true
+modify-projectile-damage: true
+
 # by default Minecraft shows the adjusted value for attack damage and speed
 # the value for attack damage is always +1 while attack speed +4
 # default: true

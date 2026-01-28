@@ -2,6 +2,7 @@ package me.xdanez.roguelikeitems.listeners;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import me.xdanez.roguelikeitems.models.ConfigData;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Arrow;
@@ -15,6 +16,7 @@ public class PlayerShootsBowListener implements Listener {
 
     @EventHandler
     public void onPlayerShootsBow(EntityShootBowEvent e) {
+        if (!ConfigData.getConfigData().modifyProjectileDamage()) return;
         ItemStack bow = e.getBow();
         if (bow == null) return;
 
