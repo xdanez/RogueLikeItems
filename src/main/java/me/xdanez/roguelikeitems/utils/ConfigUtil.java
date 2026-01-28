@@ -14,6 +14,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
+import org.yaml.snakeyaml.constructor.ConstructorException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,13 @@ final public class ConfigUtil {
     }
 
     public static Pair<Integer, Integer> validateConfig() {
+        try {
+            RogueLikeItems.plugin().reloadConfig();
+        } catch (ConstructorException e) {
+            RogueLikeItems.logger().severe("Unable to load config!\n" + e.getMessage());
+            return null;
+        }
+
         amtWarnings = 0;
         amtErrors = 0;
         validateModifiers();
@@ -59,11 +67,12 @@ final public class ConfigUtil {
         List<CustomAttributeModifier> customAttributeModifierList = new ArrayList<>(List.of());
 
         if (keys.isEmpty()) {
-            RogueLikeItems.logger().warning("No amplifier found. Items will not be affected in any way");
+            RogueLikeItems.logger().info("Found 0 amplifiers");
             configData.setCustomAttributeModifier(customAttributeModifierList);
             return;
         }
-
+        RogueLikeItems.logger().info("Found " + keys.size() + " amplifiers");
+        int amtLoaded = 0;
         for (String k : keys) {
             String key = "minecraft:" + k.replace("-", "_").replace(" ", "_");
             if (!attributeList.contains(Key.key(key)) && !k.equalsIgnoreCase("durability")) {
@@ -227,7 +236,9 @@ final public class ConfigUtil {
                     armorAndShield,
                     useOnlyNaturalNumbers)
             );
+            amtLoaded++;
         }
+        RogueLikeItems.logger().info("Loaded " + amtLoaded + " amplifiers");
         configData.setCustomAttributeModifier(customAttributeModifierList);
     }
 
