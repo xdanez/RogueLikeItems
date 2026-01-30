@@ -10,7 +10,8 @@ public enum ConfigSetting implements ConfigType {
     IGNORE_ITEMS("ignore-items"),
     BOW_MAINHAND_ATTACK("bow-mainhand-attack"),
     MODIFY_PROJECTILE_DAMAGE("modify-projectile-damage"),
-    SHOW_ADJUSTED_VALUES("show-adjusted-values");
+    SHOW_ADJUSTED_VALUES("show-adjusted-values"),
+    USE_LEGACY_DURABILITY_LORE("use-legacy-durability-lore");
 
     private final String key;
 

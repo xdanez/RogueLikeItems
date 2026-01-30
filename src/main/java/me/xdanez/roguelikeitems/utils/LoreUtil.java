@@ -1,5 +1,6 @@
 package me.xdanez.roguelikeitems.utils;
 
+import me.xdanez.roguelikeitems.models.ConfigData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
@@ -14,6 +15,7 @@ import java.util.List;
 final public class LoreUtil {
 
     public static void setDurabilityLore(ItemStack item, double amplifier) {
+        if (!ConfigData.getConfigData().useLegacyDurabilityLore()) return;
         List<Component> lore = item.lore();
         if (lore == null) lore = new ArrayList<>();
 

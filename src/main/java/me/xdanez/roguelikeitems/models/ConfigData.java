@@ -69,6 +69,10 @@ public class ConfigData {
         return RogueLikeItems.config().getBoolean(ConfigSetting.SHOW_ADJUSTED_VALUES.toString());
     }
 
+    public boolean useLegacyDurabilityLore() {
+        return RogueLikeItems.config().getBoolean(ConfigSetting.USE_LEGACY_DURABILITY_LORE.toString());
+    }
+
     public List<Material> getIgnoreItemList() {
         return ignoreItemList;
     }

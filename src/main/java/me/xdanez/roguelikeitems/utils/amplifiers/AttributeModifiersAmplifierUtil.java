@@ -20,10 +20,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 final public class AttributeModifiersAmplifierUtil {
 
+    private static final ConfigData configData = ConfigData.getConfigData();
     private static final int NEGATIVE = 0xfc5454;
     private static final int POSITIVE = 0x5454fc;
     private static final int NEUTRAL = 0xa8a8a8;
@@ -37,9 +39,8 @@ final public class AttributeModifiersAmplifierUtil {
 
         EquipmentSlotGroup group = ItemType.getGroup(material);
 
-        List<CustomAttributeModifier> camList = ConfigData.getConfigData().getCustomAttributeModifiers();
+        List<CustomAttributeModifier> camList = configData.getCustomAttributeModifiers();
         for (ItemAttributeModifiers.Entry e : defaultAttributes.modifiers()) {
-
             CustomAttributeModifier cam = camList.stream()
                     .filter(c -> c.attribute() == e.attribute()).findFirst().orElse(null);
 
@@ -54,8 +55,12 @@ final public class AttributeModifiersAmplifierUtil {
             modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
         }
 
+        CustomAttributeModifier durabilityModifier = null;
         for (CustomAttributeModifier cam : camList) {
-            if (cam.attribute() == null) continue;
+            if (cam.attribute() == null) {
+                durabilityModifier = cam;
+                continue;
+            }
             if (defaultAttributes.modifiers().stream().anyMatch(d -> d.attribute() == cam.attribute())) continue;
             if (!ConfigUtil.useAmplifier(cam, material)) continue;
 
@@ -68,7 +73,35 @@ final public class AttributeModifiersAmplifierUtil {
                     item);
         }
 
+        if (durabilityModifier != null && ConfigUtil.useAmplifier(durabilityModifier, material)) {
+            double amplifier = AmplifierUtil.getRandomAmplifierValue(durabilityModifier);
+            if (amplifier != 0) {
+                DurabilityAmplifierUtil.setDurabilityData(item, amplifier);
+                setDurabilityLore(modifiedAttributes, group, amplifier);
+            }
+        }
+
         item.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, modifiedAttributes.build());
+    }
+
+    private static void setDurabilityLore(
+            ItemAttributeModifiers.Builder modifiedAttributes,
+            EquipmentSlotGroup group,
+            double amplifier
+    ) {
+        if (configData.useLegacyDurabilityLore()) return;
+        modifiedAttributes.addModifier(Attribute.ATTACK_DAMAGE, new AttributeModifier(
+                        AmplifierUtil.DISPLAY_DURABILITY_KEY,
+                        0,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        group
+                ),
+                group,
+                AttributeModifierDisplay.override(
+                        Component.text((amplifier > 0 ? "+" : "")
+                                + new DecimalFormat("#.##").format(amplifier * 100.0) + "% Durability"
+                        ).color(TextColor.color(amplifier > 0 ? GREEN : NEGATIVE))
+                ));
     }
 
     private static void addCustomModifier(
@@ -81,7 +114,7 @@ final public class AttributeModifiersAmplifierUtil {
             EquipmentSlotGroup group,
             ItemStack item
     ) {
-        boolean showAdjustedValues = ConfigData.getConfigData().showAdjustedValues();
+        boolean showAdjustedValues = configData.showAdjustedValues();
         boolean dmgOrSpd = attribute.equals(Attribute.ATTACK_DAMAGE) || attribute.equals(Attribute.ATTACK_SPEED);
         modifierAttributes.addModifier(attribute,
                 new AttributeModifier(
@@ -142,33 +175,33 @@ final public class AttributeModifiersAmplifierUtil {
         ItemAttributeModifiers resOgAttributes = ItemStack.of(result.getType()).getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 
         for (ItemAttributeModifiers.Entry e : inputAttributes.modifiers()) {
-            ItemAttributeModifiers.Entry ogInputEntry = ogInputAttributes.modifiers().stream()
-                    .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
+            if (!e.modifier().key().equals(AmplifierUtil.DISPLAY_DURABILITY_KEY)) {
+                ItemAttributeModifiers.Entry ogInputEntry = ogInputAttributes.modifiers().stream()
+                        .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
 
+                ItemAttributeModifiers.Entry ogResEntry = resOgAttributes.modifiers().stream()
+                        .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
 
-            ItemAttributeModifiers.Entry ogResEntry = resOgAttributes.modifiers().stream()
-                    .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
+                if (ogInputEntry != null && input.getItemMeta().getPersistentDataContainer().has(key(e.attribute()))) {
+                    double base = ogInputEntry.modifier().getAmount();
+                    double modifiedValue = e.modifier().getAmount();
+                    boolean inPercent = input.getItemMeta().getPersistentDataContainer().get(key(e.attribute()), PersistentDataType.BOOLEAN);
+                    double amplifier = inPercent ? (modifiedValue / base) - 1 : modifiedValue - base;
 
-            if (ogInputEntry != null && input.getItemMeta().getPersistentDataContainer().has(key(e.attribute()))) {
-                double base = ogInputEntry.modifier().getAmount();
-                double modifiedValue = e.modifier().getAmount();
-                boolean inPercent = input.getItemMeta().getPersistentDataContainer().get(key(e.attribute()), PersistentDataType.BOOLEAN);
-                double amplifier = inPercent ? (modifiedValue / base) - 1 : modifiedValue - base;
+                    if (ogResEntry != null) base++;
 
-                if (ogResEntry != null) base++;
+                    double extra = inPercent ? base * amplifier : amplifier;
+                    double amount = base + extra;
 
-                double extra = inPercent ? base * amplifier : amplifier;
-                double amount = base + extra;
+                    addCustomModifier(modifiedAttributes, amount, amplifier, extra, e.attribute(), inPercent, e.getGroup(), null);
+                    continue;
+                }
 
-                addCustomModifier(modifiedAttributes, amount, amplifier, extra, e.attribute(), inPercent, e.getGroup(), null);
-                continue;
+                if (ogResEntry != null) {
+                    modifiedAttributes.addModifier(ogResEntry.attribute(), ogResEntry.modifier(), ogResEntry.getGroup(), ogResEntry.display());
+                    continue;
+                }
             }
-
-            if (ogResEntry != null) {
-                modifiedAttributes.addModifier(ogResEntry.attribute(), ogResEntry.modifier(), ogResEntry.getGroup(), ogResEntry.display());
-                continue;
-            }
-
             modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
         }
 

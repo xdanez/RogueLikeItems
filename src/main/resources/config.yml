@@ -103,6 +103,10 @@ modify-projectile-damage: true
 #       This only changes the displayed text, not the value itself!
 show-adjusted-values: true
 
+# use item lore for displaying durability instead of displaying it at attribute modifier list
+# default: false
+use-legacy-durability-lore: false
+
 # ignore items for all attributes
 # empty by default
 ignore-items: [ ]
