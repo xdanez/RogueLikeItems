@@ -42,8 +42,9 @@ public class Reload extends SubCommand {
     public void execute(@NotNull CommandSender sender, String[] args) {
         Pair<Integer, Integer> validConfig = ConfigUtil.validateConfig();
         if (validConfig == null) {
-            sender.sendMessage(Component.text("Unable to reload config. Look in console for more information")
-                    .color(TextColor.color(0xff0000)));
+            if (sender instanceof Player)
+                sender.sendMessage(Component.text("Unable to reload config. Look in console for more information")
+                        .color(TextColor.color(0xff0000)));
             return;
         }
         int amtWarning = validConfig.left();
