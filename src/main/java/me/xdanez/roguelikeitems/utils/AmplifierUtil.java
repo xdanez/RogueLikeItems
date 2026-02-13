@@ -48,17 +48,12 @@ final public class AmplifierUtil {
 
         ItemAttributeModifiers attributes = item.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
         for (ItemAttributeModifiers.Entry e : attributes.modifiers()) {
-            ItemAttributeModifiers.Entry defaultAttribute = ItemStack.of(item.getType())
-                    .getData(DataComponentTypes.ATTRIBUTE_MODIFIERS).modifiers()
-                    .stream().filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
-
-            if (defaultAttribute == null) return true;
-
-            double defaultAmount = defaultAttribute.modifier().getAmount();
-            double modifiedAmount = e.modifier().getAmount();
-
-            if (defaultAmount != modifiedAmount) return true;
+            if (isCustomKey(e.modifier().getKey())) return true;
         }
         return false;
+    }
+
+    private static boolean isCustomKey(NamespacedKey key) {
+        return key.key().toString().contains("roguelikeitems");
     }
 }
