@@ -1,6 +1,5 @@
 package me.xdanez.roguelikeitems.utils;
 
-import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.Config;
@@ -8,7 +7,6 @@ import me.xdanez.roguelikeitems.enums.ConfigSetting;
 import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.models.CustomAttributeModifier;
-import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -58,9 +56,6 @@ final public class ConfigUtil {
     private static void validateModifiers() {
         ConfigData configData = ConfigData.getConfigData();
         Set<String> keys = RogueLikeItems.config().getKeys(false);
-        List<Key> attributeList = Stream.of(Lists.newArrayList(Registry.ATTRIBUTE).toArray(new Attribute[0]))
-                .map(Attribute::key)
-                .collect(Collectors.toList());
 
         keys.removeIf(settingKeys::contains);
 
@@ -75,15 +70,13 @@ final public class ConfigUtil {
         int amtLoaded = 0;
         for (String k : keys) {
             String key = "minecraft:" + k.replace("-", "_").replace(" ", "_");
-            if (!attributeList.contains(Key.key(key)) && !k.equalsIgnoreCase("durability")) {
+
+            final Attribute attribute = Registry.ATTRIBUTE.get(NamespacedKey.fromString(key));
+            if (!k.equalsIgnoreCase("durability") && attribute == null) {
                 RogueLikeItems.logger().warning("Could not find Attribute " + k);
                 amtWarnings++;
                 continue;
             }
-
-            Attribute attribute;
-            if (k.equalsIgnoreCase("durability")) attribute = null;
-            else attribute = Registry.ATTRIBUTE.get(NamespacedKey.fromString(key));
 
             ConfigurationSection configurationSection = RogueLikeItems.config().getConfigurationSection(k);
             Set<String> configurationSectionKeys = configurationSection.getKeys(false);
