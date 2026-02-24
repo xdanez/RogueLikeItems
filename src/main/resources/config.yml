@@ -110,3 +110,8 @@ use-legacy-durability-lore: false
 # ignore items for all attributes
 # empty by default
 ignore-items: [ ]
+
+# by default tools, weapons, armor, saddles and harnesses are modifiable
+# here you can include "non-conventional" items or blocks
+# empty by default
+include-items: [ ]

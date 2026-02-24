@@ -2,9 +2,7 @@ package me.xdanez.roguelikeitems.utils;
 
 import it.unimi.dsi.fastutil.Pair;
 import me.xdanez.roguelikeitems.RogueLikeItems;
-import me.xdanez.roguelikeitems.enums.Config;
-import me.xdanez.roguelikeitems.enums.ConfigSetting;
-import me.xdanez.roguelikeitems.enums.ItemType;
+import me.xdanez.roguelikeitems.enums.*;
 import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.models.CustomAttributeModifier;
 import org.bukkit.Material;
@@ -17,20 +15,19 @@ import org.yaml.snakeyaml.constructor.ConstructorException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 final public class ConfigUtil {
+    private static final ConfigData configData = ConfigData.getConfigData();
+
     static int amtWarnings = 0;
     static int amtErrors = 0;
 
-    static List<String> settingKeys = Stream.of(ConfigSetting.values())
-            .map(ConfigSetting::toString)
-            .collect(Collectors.toList());
+    private static final ConfigSetting[] settingKeys = ConfigSetting.values();
 
     public static boolean useAmplifier(CustomAttributeModifier cam, Material material) {
-        if (ConfigData.getConfigData().getIgnoreItemList().contains(material)) return false;
+        if (ConfigData.getConfigData().getIgnoreItemsList().contains(material)) return false;
         if (cam.ignoreItemsList().contains(material)) return false;
         if (ItemType.isWeaponOrTool(material) && !cam.useToolsAndWeapons()) return false;
         if (ItemType.isArmorOrShield(material) && !cam.useArmorAndShield()) return false;
@@ -57,13 +54,15 @@ final public class ConfigUtil {
         ConfigData configData = ConfigData.getConfigData();
         Set<String> keys = RogueLikeItems.config().getKeys(false);
 
-        keys.removeIf(settingKeys::contains);
+        for (ConfigSetting k : settingKeys) {
+            keys.remove(k.toString());
+        }
 
-        List<CustomAttributeModifier> customAttributeModifierList = new ArrayList<>(List.of());
+        HashMap<Attribute, CustomAttributeModifier> customAttributeModifierMap = new HashMap<>();
 
         if (keys.isEmpty()) {
             RogueLikeItems.logger().info("Found 0 amplifiers");
-            configData.setCustomAttributeModifier(customAttributeModifierList);
+            configData.setCustomAttributeModifier(customAttributeModifierMap);
             return;
         }
         RogueLikeItems.logger().info("Found " + keys.size() + " amplifiers");
@@ -86,7 +85,7 @@ final public class ConfigUtil {
                 if (!validateTag(k, yActive, Config.ACTIVE)) continue;
             }
 
-            if (customAttributeModifierList.stream().anyMatch(c -> c.attribute() == attribute)) {
+            if (customAttributeModifierMap.get(attribute) != null) {
                 RogueLikeItems.logger().warning("Modifier for attribute " + k + " already exists!");
                 amtWarnings++;
                 continue;
@@ -124,7 +123,7 @@ final public class ConfigUtil {
 
             List<Material> ignoreItems = new ArrayList<>(List.of());
             if (configurationSectionKeys.contains(Config.IGNORE_ITEMS.toString())) {
-                ignoreItems = validateIgnoreList(k, configurationSection.get(Config.IGNORE_ITEMS.toString()));
+                ignoreItems = validateItemList(k, Config.IGNORE_ITEMS, configurationSection.get(Config.IGNORE_ITEMS.toString()));
             }
 
             boolean toolsAndWeapons = true;
@@ -219,94 +218,70 @@ final public class ConfigUtil {
                 useOnlyNaturalNumbers = isInt;
             }
 
-            customAttributeModifierList.add(new CustomAttributeModifier(
-                    attribute,
+            customAttributeModifierMap.put(attribute, new CustomAttributeModifier(
                     inPercent,
                     range,
                     chance,
                     ignoreItems,
                     toolsAndWeapons,
                     armorAndShield,
-                    useOnlyNaturalNumbers)
-            );
+                    useOnlyNaturalNumbers
+            ));
+
             amtLoaded++;
         }
         RogueLikeItems.logger().info("Loaded " + amtLoaded + " amplifiers");
-        configData.setCustomAttributeModifier(customAttributeModifierList);
+        configData.setCustomAttributeModifier(customAttributeModifierMap);
     }
 
-    private static List<Material> validateIgnoreList(String k, Object yIgnoreLIst) {
-        List<Material> ignoreItems = new ArrayList<>(List.of());
+    private static List<Material> validateItemList(String k, ConfigType config, Object yItemList) {
+        List<Material> itemList = new ArrayList<>(List.of());
+        String errorMessage = config + (k != null ? (" in " + k) : " ") + "wrongfully declared!";
         try {
-            Object yIgnoreItems = yIgnoreLIst == null ? RogueLikeItems.getConfigVal(Config.IGNORE_ITEMS) : yIgnoreLIst;
-            if (yIgnoreItems != null) {
-                List<?> list = (List<?>) yIgnoreItems;
+            if (yItemList != null) {
+                List<?> list = (List<?>) yItemList;
                 for (Object m : list) {
                     try {
                         Material material = Material.valueOf(m.toString()
                                 .toUpperCase()
-                                .replace("-", "_")
-                                .replace(" ", "_"));
+                                .replaceAll("-", "_")
+                                .replaceAll(" ", "_"));
 
-                        if (!ItemType.isModifiable(material)) {
-                            RogueLikeItems.logger().warning(m
-                                    + " in " + Config.IGNORE_ITEMS
-                                    + (k != null ? (" in " + k) : "") + " is not modifiable!"
-                            );
-                            amtWarnings++;
-                            continue;
-                        }
-
-                        ignoreItems.add(material);
+                        itemList.add(material);
                     } catch (IllegalArgumentException e) {
-                        RogueLikeItems.logger().warning(m
-                                + " in " + Config.IGNORE_ITEMS
-                                + (k != null ? (" in " + k) : "") + " could not be found!"
-                        );
+                        RogueLikeItems.logger().warning(errorMessage);
                         amtWarnings++;
                     }
                 }
             }
         } catch (ClassCastException e) {
-            RogueLikeItems.logger().warning(Config.IGNORE_ITEMS + " "
-                    + (k != null ? (" in " + k) : "") + "wrongfully declared!");
+            RogueLikeItems.logger().warning(errorMessage);
             amtWarnings++;
         }
-        return ignoreItems;
+        return itemList;
     }
 
-    private static boolean validateTag(String key, Object tag, Config config) {
+    private static boolean validateTag(String key, Object tag, ConfigType config) {
         try {
             return (Boolean) tag;
         } catch (ClassCastException e) {
-            RogueLikeItems.logger().warning(config + " for " + key + " wrongfully declared");
+            RogueLikeItems.logger().warning(config + (key != null ? " for " + key : "") + " wrongfully declared");
             amtWarnings++;
             return true;
         }
     }
 
-    private static void validateTag(Object tag, String config) {
-        try {
-            boolean _t = (Boolean) tag;
-        } catch (ClassCastException e) {
-            RogueLikeItems.logger().warning(config + " wrongfully declared!");
-            amtWarnings++;
-        }
-    }
-
     private static void validateSettings() {
-        for (String k : settingKeys) {
-            if (!k.equalsIgnoreCase(Config.IGNORE_ITEMS.toString())) {
-                validateTag(RogueLikeItems.config().get(k), k);
+        for (ConfigSetting k : settingKeys) {
+            if (k.equals(ConfigSetting.IGNORE_ITEMS)) {
+                configData.setIgnoreItemsList(validateItemList(null, ConfigSetting.IGNORE_ITEMS, RogueLikeItems.config().get(k.toString())));
                 continue;
             }
-            setIgnoreList(validateIgnoreList(null, null));
+            if (k.equals(ConfigSetting.INCLUDE_ITEMS)) {
+                configData.setIncludeItemsList(validateItemList(null, ConfigSetting.INCLUDE_ITEMS, RogueLikeItems.config().get(k.toString())));
+                continue;
+            }
+            validateTag(null, RogueLikeItems.config().get(k.toString()), k);
         }
     }
-
-    private static void setIgnoreList(List<Material> items) {
-        ConfigData configData = ConfigData.getConfigData();
-        configData.setIgnoreItemList(items);
-    }
-
 }

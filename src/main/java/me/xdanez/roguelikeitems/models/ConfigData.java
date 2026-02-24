@@ -3,8 +3,11 @@ package me.xdanez.roguelikeitems.models;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.ConfigSetting;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigData {
 
@@ -17,20 +20,21 @@ public class ConfigData {
         return CONFIG_DATA;
     }
 
-    private List<Material> ignoreItemList = List.of();
-    private List<CustomAttributeModifier> customAttributeModifiers = List.of();
+    private List<Material> ignoreItemsList = List.of();
+    private List<Material> includeItemsList = List.of();
+    private Map<Attribute, CustomAttributeModifier> customAttributeModifiers = Map.of();
 
-    public List<CustomAttributeModifier> getCustomAttributeModifiers() {
+    @Nullable
+    public CustomAttributeModifier getCustomAttributeModifier(Attribute attribute) {
+        return customAttributeModifiers.getOrDefault(attribute, null);
+    }
+
+    public Map<Attribute, CustomAttributeModifier> getCustomAttributeModifiers() {
         return customAttributeModifiers;
     }
 
-    public void setCustomAttributeModifier(List<CustomAttributeModifier> customAttributeModifiers) {
+    public void setCustomAttributeModifier(Map<Attribute, CustomAttributeModifier> customAttributeModifiers) {
         this.customAttributeModifiers = customAttributeModifiers;
-    }
-
-    public CustomAttributeModifier getDurabilityModifier() {
-        return customAttributeModifiers.stream()
-                .filter(c -> c.attribute() == null).findFirst().orElse(null);
     }
 
     public boolean useCrafting() {
@@ -73,11 +77,19 @@ public class ConfigData {
         return RogueLikeItems.config().getBoolean(ConfigSetting.USE_LEGACY_DURABILITY_LORE.toString());
     }
 
-    public List<Material> getIgnoreItemList() {
-        return ignoreItemList;
+    public List<Material> getIgnoreItemsList() {
+        return ignoreItemsList;
     }
 
-    public void setIgnoreItemList(List<Material> ignoreItemList) {
-        this.ignoreItemList = ignoreItemList;
+    public void setIgnoreItemsList(List<Material> materials) {
+        ignoreItemsList = materials;
+    }
+
+    public List<Material> getIncludeItemsList() {
+        return includeItemsList;
+    }
+
+    public void setIncludeItemsList(List<Material> materials) {
+        includeItemsList = materials;
     }
 }

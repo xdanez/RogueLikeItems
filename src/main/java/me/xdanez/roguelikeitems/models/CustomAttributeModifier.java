@@ -1,12 +1,10 @@
 package me.xdanez.roguelikeitems.models;
 
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 
 import java.util.List;
 
 public class CustomAttributeModifier {
-    private final Attribute attribute;
     private final boolean inPercent;
     private final float from;
     private final float to;
@@ -17,7 +15,6 @@ public class CustomAttributeModifier {
     private final boolean useOnlyNaturalNumbers;
 
     public CustomAttributeModifier(
-            Attribute attribute,
             boolean inPercent,
             List<Float> range,
             int chance,
@@ -26,7 +23,6 @@ public class CustomAttributeModifier {
             boolean armorAndShield,
             boolean useOnlyNaturalNumbers
     ) {
-        this.attribute = attribute;
         this.inPercent = inPercent;
         this.from = range.getFirst();
         this.to = range.getLast();
@@ -35,10 +31,6 @@ public class CustomAttributeModifier {
         this.toolsAndWeapons = toolsAndWeapons;
         this.armorAndShield = armorAndShield;
         this.useOnlyNaturalNumbers = useOnlyNaturalNumbers;
-    }
-
-    public Attribute attribute() {
-        return attribute;
     }
 
     public boolean inPercent() {

@@ -24,7 +24,7 @@ final public class AmplifierUtil {
         if (material.equals(Material.AIR)) return;
         if (!ItemType.isModifiable(material)) return;
 
-        if (ConfigData.getConfigData().getIgnoreItemList().contains(material)) return;
+        if (ConfigData.getConfigData().getIgnoreItemsList().contains(material)) return;
 
         AttributeModifiersAmplifierUtil.setAmplifiers(item);
     }

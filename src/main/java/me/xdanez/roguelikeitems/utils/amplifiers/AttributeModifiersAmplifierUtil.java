@@ -9,6 +9,7 @@ import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.models.CustomAttributeModifier;
 import me.xdanez.roguelikeitems.utils.AmplifierUtil;
 import me.xdanez.roguelikeitems.utils.ConfigUtil;
+import me.xdanez.roguelikeitems.utils.LoreUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
@@ -20,8 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.text.DecimalFormat;
-import java.util.List;
+import java.util.Map;
 
 final public class AttributeModifiersAmplifierUtil {
 
@@ -39,69 +39,51 @@ final public class AttributeModifiersAmplifierUtil {
 
         EquipmentSlotGroup group = ItemType.getGroup(material);
 
-        List<CustomAttributeModifier> camList = configData.getCustomAttributeModifiers();
+        Map<Attribute, CustomAttributeModifier> camMap = configData.getCustomAttributeModifiers();
         for (ItemAttributeModifiers.Entry e : defaultAttributes.modifiers()) {
-            CustomAttributeModifier cam = camList.stream()
-                    .filter(c -> c.attribute() == e.attribute()).findFirst().orElse(null);
+            Attribute attribute = e.attribute();
+            CustomAttributeModifier cam = configData.getCustomAttributeModifier(attribute);
+            // remove it to avoid duplicate modifiers
+            camMap.remove(attribute);
 
-            if (cam != null && e.attribute().equals(cam.attribute()) && ConfigUtil.useAmplifier(cam, material)) {
+            if (cam != null && ConfigUtil.useAmplifier(cam, material)) {
                 double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
                 double base = e.modifier().getAmount();
                 double extra = cam.inPercent() ? base * amplifier : amplifier;
                 double amount = base + extra;
-                addCustomModifier(modifiedAttributes, amount, amplifier, extra, cam.attribute(), cam.inPercent(), group, item);
+                addCustomModifier(modifiedAttributes, amount, amplifier, extra, attribute, cam.inPercent(), group, item);
                 continue;
             }
-            modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
+            modifiedAttributes.addModifier(attribute, e.modifier(), e.getGroup(), e.display());
         }
 
-        CustomAttributeModifier durabilityModifier = null;
-        for (CustomAttributeModifier cam : camList) {
-            if (cam.attribute() == null) {
-                durabilityModifier = cam;
-                continue;
+        camMap.forEach(((attribute, cam) -> {
+            if (!ConfigUtil.useAmplifier(cam, material)) return;
+
+            // durability
+            if (attribute == null) {
+                if (ConfigUtil.useAmplifier(cam, material)) {
+                    double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
+                    if (amplifier != 0) {
+                        DurabilityAmplifierUtil.setDurabilityData(item, amplifier, cam.inPercent());
+                        setPersistentData(item, cam.inPercent(), null);
+                        LoreUtil.setDurabilityLore(modifiedAttributes, group, amplifier, amplifier > 0 ? GREEN : NEGATIVE, cam.inPercent());
+                    }
+                }
+                return;
             }
-            if (defaultAttributes.modifiers().stream().anyMatch(d -> d.attribute() == cam.attribute())) continue;
-            if (!ConfigUtil.useAmplifier(cam, material)) continue;
 
             double amount = AmplifierUtil.getRandomAmplifierValue(cam);
             addCustomModifier(modifiedAttributes,
                     amount,
                     cam.inPercent() ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.ADD_NUMBER,
+                    attribute,
                     cam,
                     group,
                     item);
-        }
-
-        if (durabilityModifier != null && ConfigUtil.useAmplifier(durabilityModifier, material)) {
-            double amplifier = AmplifierUtil.getRandomAmplifierValue(durabilityModifier);
-            if (amplifier != 0) {
-                DurabilityAmplifierUtil.setDurabilityData(item, amplifier);
-                setDurabilityLore(modifiedAttributes, group, amplifier);
-            }
-        }
+        }));
 
         item.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, modifiedAttributes.build());
-    }
-
-    private static void setDurabilityLore(
-            ItemAttributeModifiers.Builder modifiedAttributes,
-            EquipmentSlotGroup group,
-            double amplifier
-    ) {
-        if (configData.useLegacyDurabilityLore()) return;
-        modifiedAttributes.addModifier(Attribute.ATTACK_DAMAGE, new AttributeModifier(
-                        AmplifierUtil.DISPLAY_DURABILITY_KEY,
-                        0,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        group
-                ),
-                group,
-                AttributeModifierDisplay.override(
-                        Component.text((amplifier > 0 ? "+" : "")
-                                + new DecimalFormat("#.##").format(amplifier * 100.0) + "% Durability"
-                        ).color(TextColor.color(amplifier > 0 ? GREEN : NEGATIVE))
-                ));
     }
 
     private static void addCustomModifier(
@@ -145,17 +127,19 @@ final public class AttributeModifiersAmplifierUtil {
             ItemAttributeModifiers.Builder modifiedAttributes,
             double amount,
             AttributeModifier.Operation operation,
+            Attribute attribute,
             CustomAttributeModifier cam,
             EquipmentSlotGroup group,
             ItemStack item) {
-        modifiedAttributes.addModifier(cam.attribute(),
-                new AttributeModifier(key(cam.attribute()), amount, operation, group), group,
+        modifiedAttributes.addModifier(attribute,
+                new AttributeModifier(key(attribute), amount, operation, group), group,
                 AttributeModifierDisplay.reset()
         );
-        setPersistentData(item, cam.inPercent(), cam.attribute());
+        setPersistentData(item, cam.inPercent(), attribute);
     }
 
     private static NamespacedKey key(Attribute attribute) {
+        if (attribute == null) return AmplifierUtil.DISPLAY_DURABILITY_KEY;
         return new NamespacedKey(RogueLikeItems.plugin(),
                 attribute.key().toString()
                         .replace(":", "_") + "_amplifier");
