@@ -80,9 +80,9 @@ final public class ConfigUtil {
             ConfigurationSection configurationSection = RogueLikeItems.config().getConfigurationSection(k);
             Set<String> configurationSectionKeys = configurationSection.getKeys(false);
 
-            if (configurationSectionKeys.contains(Config.ACTIVE.toString())) {
-                Object yActive = configurationSection.get(Config.ACTIVE.toString());
-                if (!validateTag(k, yActive, Config.ACTIVE)) continue;
+            if (configurationSectionKeys.contains(ConfigModifier.ACTIVE.toString())) {
+                Object yActive = configurationSection.get(ConfigModifier.ACTIVE.toString());
+                if (!validateTag(k, yActive, ConfigModifier.ACTIVE)) continue;
             }
 
             if (customAttributeModifierMap.get(attribute) != null) {
@@ -92,60 +92,60 @@ final public class ConfigUtil {
             }
 
             boolean inPercent = true;
-            if (configurationSectionKeys.contains(Config.IN_PERCENT.toString())) {
-                Object yInPercent = configurationSection.get(Config.IN_PERCENT.toString());
-                inPercent = validateTag(k, yInPercent, Config.IN_PERCENT);
+            if (configurationSectionKeys.contains(ConfigModifier.IN_PERCENT.toString())) {
+                Object yInPercent = configurationSection.get(ConfigModifier.IN_PERCENT.toString());
+                inPercent = validateTag(k, yInPercent, ConfigModifier.IN_PERCENT);
             }
 
             int chance = 100;
-            if (configurationSectionKeys.contains(Config.CHANCE.toString())) {
+            if (configurationSectionKeys.contains(ConfigModifier.CHANCE.toString())) {
                 try {
-                    Object yChance = configurationSection.get(Config.CHANCE.toString());
+                    Object yChance = configurationSection.get(ConfigModifier.CHANCE.toString());
                     if (yChance != null) {
                         chance = (int) yChance;
 
                         if (chance > 100) {
                             chance = 100;
-                            RogueLikeItems.logger().warning(Config.CHANCE + " for " + k + " is greater than 100");
+                            RogueLikeItems.logger().warning(ConfigModifier.CHANCE + " for " + k + " is greater than 100");
                             amtWarnings++;
                         }
                         if (chance <= 0) {
                             chance = 0;
-                            RogueLikeItems.logger().warning(Config.CHANCE + " for " + k + " is less or equal to 0.");
+                            RogueLikeItems.logger().warning(ConfigModifier.CHANCE + " for " + k + " is less or equal to 0.");
                             amtWarnings++;
                         }
                     }
                 } catch (ClassCastException e) {
-                    RogueLikeItems.logger().warning(Config.CHANCE + " for " + k + " wrongfully declared");
+                    RogueLikeItems.logger().warning(ConfigModifier.CHANCE + " for " + k + " wrongfully declared");
                     amtWarnings++;
                 }
             }
 
             List<Material> ignoreItems = new ArrayList<>(List.of());
-            if (configurationSectionKeys.contains(Config.IGNORE_ITEMS.toString())) {
-                ignoreItems = validateItemList(k, Config.IGNORE_ITEMS, configurationSection.get(Config.IGNORE_ITEMS.toString()));
+            if (configurationSectionKeys.contains(ConfigModifier.IGNORE_ITEMS.toString())) {
+                ignoreItems = validateItemList(k, ConfigModifier.IGNORE_ITEMS, configurationSection.get(ConfigModifier.IGNORE_ITEMS.toString()));
             }
 
             boolean toolsAndWeapons = true;
-            if (configurationSectionKeys.contains(Config.TOOLS_AND_WEAPONS.toString())) {
-                Object yToolsAndWeapons = configurationSection.get(Config.TOOLS_AND_WEAPONS.toString());
-                toolsAndWeapons = validateTag(k, yToolsAndWeapons, Config.TOOLS_AND_WEAPONS);
+            if (configurationSectionKeys.contains(ConfigModifier.TOOLS_AND_WEAPONS.toString())) {
+                Object yToolsAndWeapons = configurationSection.get(ConfigModifier.TOOLS_AND_WEAPONS.toString());
+                toolsAndWeapons = validateTag(k, yToolsAndWeapons, ConfigModifier.TOOLS_AND_WEAPONS);
             }
 
             boolean armorAndShield = true;
-            if (configurationSectionKeys.contains(Config.ARMOR_AND_SHIELD.toString())) {
-                Object yArmorAndShield = configurationSection.get(Config.ARMOR_AND_SHIELD.toString());
-                armorAndShield = validateTag(k, yArmorAndShield, Config.ARMOR_AND_SHIELD);
+            if (configurationSectionKeys.contains(ConfigModifier.ARMOR_AND_SHIELD.toString())) {
+                Object yArmorAndShield = configurationSection.get(ConfigModifier.ARMOR_AND_SHIELD.toString());
+                armorAndShield = validateTag(k, yArmorAndShield, ConfigModifier.ARMOR_AND_SHIELD);
             }
 
-            if (!configurationSectionKeys.contains(Config.RANGE.toString())) {
+            if (!configurationSectionKeys.contains(ConfigModifier.RANGE.toString())) {
                 RogueLikeItems.logger().severe(k + " does not have a required range!");
                 amtErrors++;
                 continue;
             }
 
             List<Float> range = new ArrayList<>(List.of());
-            Object yRange = configurationSection.get(Config.RANGE.toString());
+            Object yRange = configurationSection.get(ConfigModifier.RANGE.toString());
             if (yRange == null) {
                 RogueLikeItems.logger().severe(k + " does not have required range!");
                 amtErrors++;
@@ -154,8 +154,8 @@ final public class ConfigUtil {
 
             try {
                 ConfigurationSection cRange = (ConfigurationSection) yRange;
-                Object from = cRange.get(Config.FROM.toString());
-                Object to = cRange.get(Config.TO.toString());
+                Object from = cRange.get(ConfigModifier.FROM.toString());
+                Object to = cRange.get(ConfigModifier.TO.toString());
 
                 if (from != null)
                     range.add(Float.parseFloat(from.toString()));
@@ -206,12 +206,12 @@ final public class ConfigUtil {
 
             boolean useOnlyNaturalNumbers;
             boolean isInt = range.getFirst() % 1 == 0 && range.getLast() % 1 == 0;
-            if (configurationSectionKeys.contains(Config.USE_ONLY_NATURAL_NUMBERS.toString())) {
-                Object yUseOnlyNaturalNumbers = configurationSection.get(Config.USE_ONLY_NATURAL_NUMBERS.toString());
-                useOnlyNaturalNumbers = validateTag(k, yUseOnlyNaturalNumbers, Config.USE_ONLY_NATURAL_NUMBERS);
+            if (configurationSectionKeys.contains(ConfigModifier.USE_ONLY_NATURAL_NUMBERS.toString())) {
+                Object yUseOnlyNaturalNumbers = configurationSection.get(ConfigModifier.USE_ONLY_NATURAL_NUMBERS.toString());
+                useOnlyNaturalNumbers = validateTag(k, yUseOnlyNaturalNumbers, ConfigModifier.USE_ONLY_NATURAL_NUMBERS);
                 if (useOnlyNaturalNumbers && !isInt) {
                     useOnlyNaturalNumbers = false;
-                    RogueLikeItems.logger().warning(Config.USE_ONLY_NATURAL_NUMBERS + " for " + k + " will be ignored");
+                    RogueLikeItems.logger().warning(ConfigModifier.USE_ONLY_NATURAL_NUMBERS + " for " + k + " will be ignored");
                     amtWarnings++;
                 }
             } else {
