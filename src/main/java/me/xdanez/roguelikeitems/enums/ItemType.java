@@ -75,6 +75,7 @@ public final class ItemType {
                 || isShield(material)
                 || isPetArmor(material)
                 || isSaddle(material)
+                || isCarvedPumpkin(material)
                 || configData.getIncludeItemsList().contains(material);
     }
 
