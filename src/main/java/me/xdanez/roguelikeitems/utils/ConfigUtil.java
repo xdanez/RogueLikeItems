@@ -68,7 +68,7 @@ final public class ConfigUtil {
         RogueLikeItems.logger().info("Found " + keys.size() + " amplifiers");
         int amtLoaded = 0;
         for (String k : keys) {
-            String key = "minecraft:" + k.replace("-", "_").replace(" ", "_");
+            String key = "minecraft:" + k.toLowerCase().replace("-", "_").replace(" ", "_");
 
             final Attribute attribute = Registry.ATTRIBUTE.get(NamespacedKey.fromString(key));
             if (!k.equalsIgnoreCase("durability") && attribute == null) {
