@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,17 +21,17 @@ public class ConfigData {
         return CONFIG_DATA;
     }
 
-    private List<Material> ignoreItemsList = List.of();
-    private List<Material> includeItemsList = List.of();
-    private Map<Attribute, CustomAttributeModifier> customAttributeModifiers = Map.of();
+    private List<Material> ignoreItemsList;
+    private List<Material> includeItemsList;
+    private Map<Attribute, CustomAttributeModifier> customAttributeModifiers;
 
     @Nullable
     public CustomAttributeModifier getCustomAttributeModifier(Attribute attribute) {
         return customAttributeModifiers.getOrDefault(attribute, null);
     }
 
-    public Map<Attribute, CustomAttributeModifier> getCustomAttributeModifiers() {
-        return customAttributeModifiers;
+    public Map<Attribute, CustomAttributeModifier> getCustomAttributeModifierCopy() {
+        return new HashMap<>(customAttributeModifiers);
     }
 
     public void setCustomAttributeModifier(Map<Attribute, CustomAttributeModifier> customAttributeModifiers) {

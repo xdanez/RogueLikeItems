@@ -143,7 +143,7 @@ final public class ConfigUtil {
                 continue;
             }
 
-            List<Float> range = new ArrayList<>(List.of());
+            List<Float> range = new ArrayList<>();
             Object yRange = configurationSection.get(ConfigModifier.RANGE.toString());
             if (yRange == null) {
                 RogueLikeItems.logger().severe(k + " does not have required range!");
@@ -274,15 +274,16 @@ final public class ConfigUtil {
 
     private static void validateSettings() {
         for (ConfigSetting k : settingKeys) {
-            if (k.equals(ConfigSetting.IGNORE_ITEMS)) {
-                configData.setIgnoreItemsList(validateItemList(null, ConfigSetting.IGNORE_ITEMS, RogueLikeItems.config().get(k.toString())));
-                continue;
+            switch (k) {
+                case IGNORE_ITEMS:
+                    configData.setIgnoreItemsList(validateItemList(null, ConfigSetting.IGNORE_ITEMS, RogueLikeItems.config().get(k.toString())));
+                    continue;
+                case INCLUDE_ITEMS:
+                    configData.setIncludeItemsList(validateItemList(null, ConfigSetting.INCLUDE_ITEMS, RogueLikeItems.config().get(k.toString())));
+                    continue;
+                default:
+                    validateTag(null, RogueLikeItems.config().get(k.toString()), k);
             }
-            if (k.equals(ConfigSetting.INCLUDE_ITEMS)) {
-                configData.setIncludeItemsList(validateItemList(null, ConfigSetting.INCLUDE_ITEMS, RogueLikeItems.config().get(k.toString())));
-                continue;
-            }
-            validateTag(null, RogueLikeItems.config().get(k.toString()), k);
         }
     }
 }

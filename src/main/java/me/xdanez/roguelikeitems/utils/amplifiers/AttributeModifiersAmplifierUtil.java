@@ -39,7 +39,7 @@ final public class AttributeModifiersAmplifierUtil {
 
         EquipmentSlotGroup group = ItemType.getGroup(material);
 
-        Map<Attribute, CustomAttributeModifier> camMap = configData.getCustomAttributeModifiers();
+        Map<Attribute, CustomAttributeModifier> camMap = configData.getCustomAttributeModifierCopy();
         for (ItemAttributeModifiers.Entry e : defaultAttributes.modifiers()) {
             Attribute attribute = e.attribute();
             CustomAttributeModifier cam = configData.getCustomAttributeModifier(attribute);
