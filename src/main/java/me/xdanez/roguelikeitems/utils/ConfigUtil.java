@@ -27,7 +27,7 @@ final public class ConfigUtil {
     private static final ConfigSetting[] settingKeys = ConfigSetting.values();
 
     public static boolean useAmplifier(CustomAttributeModifier cam, Material material) {
-        if (ConfigData.getConfigData().getIgnoreItemsList().contains(material)) return false;
+        if (configData.getIgnoreItemsList().contains(material)) return false;
         if (cam.ignoreItemsList().contains(material)) return false;
         if (ItemType.isWeaponOrTool(material) && !cam.useToolsAndWeapons()) return false;
         if (ItemType.isArmorOrShield(material) && !cam.useArmorAndShield()) return false;
@@ -51,7 +51,6 @@ final public class ConfigUtil {
     }
 
     private static void validateModifiers() {
-        ConfigData configData = ConfigData.getConfigData();
         Set<String> keys = RogueLikeItems.config().getKeys(false);
 
         for (ConfigSetting k : settingKeys) {
@@ -111,17 +110,17 @@ final public class ConfigUtil {
                         }
                         if (chance <= 0) {
                             chance = 0;
-                            RogueLikeItems.logger().warning(ConfigModifier.CHANCE + " for " + k + " is less or equal to 0.");
+                            RogueLikeItems.logger().warning(ConfigModifier.CHANCE + " for " + k + " is less or equal to 0");
                             amtWarnings++;
                         }
                     }
                 } catch (ClassCastException e) {
-                    RogueLikeItems.logger().warning(ConfigModifier.CHANCE + " for " + k + " wrongfully declared");
+                    RogueLikeItems.logger().warning(ConfigModifier.CHANCE + " for " + k + " needs to be an integer");
                     amtWarnings++;
                 }
             }
 
-            List<Material> ignoreItems = new ArrayList<>(List.of());
+            List<Material> ignoreItems = List.of();
             if (configurationSectionKeys.contains(ConfigModifier.IGNORE_ITEMS.toString())) {
                 ignoreItems = validateItemList(k, ConfigModifier.IGNORE_ITEMS, configurationSection.get(ConfigModifier.IGNORE_ITEMS.toString()));
             }
@@ -172,7 +171,7 @@ final public class ConfigUtil {
             } catch (ClassCastException e) {
                 // old format or single value is used
             } catch (NumberFormatException e) {
-                RogueLikeItems.logger().severe("Range for " + k + " wrongfully declared!");
+                RogueLikeItems.logger().severe("Range for " + k + " must be numbers");
                 amtErrors++;
                 continue;
             }
@@ -193,7 +192,7 @@ final public class ConfigUtil {
                         range.add(Float.parseFloat(yRange.toString()));
                     }
                 } catch (IllegalArgumentException e) {
-                    RogueLikeItems.logger().severe("Range for " + k + " wrongfully declared!");
+                    RogueLikeItems.logger().severe("Range for " + k + " must be a list of 1 or 2 numbers or a single number");
                     amtErrors++;
                     return;
                 }
@@ -236,7 +235,6 @@ final public class ConfigUtil {
 
     private static List<Material> validateItemList(String k, ConfigType config, Object yItemList) {
         List<Material> itemList = new ArrayList<>(List.of());
-        String errorMessage = config + (k != null ? (" in " + k) : " ") + "wrongfully declared!";
         try {
             if (yItemList != null) {
                 List<?> list = (List<?>) yItemList;
@@ -249,13 +247,16 @@ final public class ConfigUtil {
 
                         itemList.add(material);
                     } catch (IllegalArgumentException e) {
-                        RogueLikeItems.logger().warning(errorMessage);
+                        RogueLikeItems.logger()
+                                .warning(m + " in " + config + " list"
+                                        + (k != null ? " for modifier " + k : "")
+                                        + " does not exist");
                         amtWarnings++;
                     }
                 }
             }
         } catch (ClassCastException e) {
-            RogueLikeItems.logger().warning(errorMessage);
+            RogueLikeItems.logger().warning(config + (k != null ? (" in " + k) : " ") + "must be a list");
             amtWarnings++;
         }
         return itemList;
@@ -265,7 +266,7 @@ final public class ConfigUtil {
         try {
             return (Boolean) tag;
         } catch (ClassCastException e) {
-            RogueLikeItems.logger().warning(config + (key != null ? " for " + key : "") + " wrongfully declared");
+            RogueLikeItems.logger().warning(config + (key != null ? " for " + key : "") + " must be a boolean");
             amtWarnings++;
             return true;
         }
