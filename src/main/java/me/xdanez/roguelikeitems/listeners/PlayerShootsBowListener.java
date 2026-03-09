@@ -33,7 +33,8 @@ public class PlayerShootsBowListener implements Listener {
         if (dmg == null) return;
         double damageAmplifier = dmg.modifier().getAmount();
         double baseDamage = arrow.getDamage();
-        arrow.setDamage(baseDamage + (dmg.modifier().getOperation().equals(AttributeModifier.Operation.ADD_SCALAR) ? baseDamage * damageAmplifier : damageAmplifier));
+        double totalDmg = baseDamage + (dmg.modifier().getOperation().equals(AttributeModifier.Operation.ADD_SCALAR) ? baseDamage * damageAmplifier : damageAmplifier);
+        arrow.setDamage(totalDmg >= 0 ? totalDmg : 0);
         e.setProjectile(arrow);
     }
 }

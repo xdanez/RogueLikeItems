@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Map;
+import java.util.UUID;
 
 final public class AttributeModifiersAmplifierUtil {
 
@@ -66,7 +67,7 @@ final public class AttributeModifiersAmplifierUtil {
                     double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
                     if (amplifier != 0) {
                         DurabilityAmplifierUtil.setDurabilityData(item, amplifier, cam.inPercent());
-                        setPersistentData(item, cam.inPercent(), null);
+                        setPersistentData(item, cam.inPercent(), AmplifierUtil.DISPLAY_DURABILITY_KEY);
                         LoreUtil.setDurabilityLore(modifiedAttributes, group, amplifier, amplifier > 0 ? GREEN : NEGATIVE, cam.inPercent());
                     }
                 }
@@ -98,12 +99,9 @@ final public class AttributeModifiersAmplifierUtil {
     ) {
         boolean showAdjustedValues = configData.showAdjustedValues();
         boolean dmgOrSpd = attribute.equals(Attribute.ATTACK_DAMAGE) || attribute.equals(Attribute.ATTACK_SPEED);
+        NamespacedKey key = randomKey();
         modifierAttributes.addModifier(attribute,
-                new AttributeModifier(
-                        key(attribute),
-                        amount,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        group),
+                new AttributeModifier(key, amount, AttributeModifier.Operation.ADD_NUMBER, group),
                 group,
                 AttributeModifierDisplay.override(
                         Component.text((dmgOrSpd ? " " : "")
@@ -120,7 +118,7 @@ final public class AttributeModifiersAmplifierUtil {
                                         : amount > 0 ? POSITIVE
                                         : NEGATIVE))
                 ));
-        if (item != null) setPersistentData(item, inPercent, attribute);
+        if (item != null) setPersistentData(item, inPercent, key);
     }
 
     private static void addCustomModifier(
@@ -131,23 +129,21 @@ final public class AttributeModifiersAmplifierUtil {
             CustomAttributeModifier cam,
             EquipmentSlotGroup group,
             ItemStack item) {
+        NamespacedKey key = randomKey();
         modifiedAttributes.addModifier(attribute,
-                new AttributeModifier(key(attribute), amount, operation, group), group,
+                new AttributeModifier(key, amount, operation, group), group,
                 AttributeModifierDisplay.reset()
         );
-        setPersistentData(item, cam.inPercent(), attribute);
+        setPersistentData(item, cam.inPercent(), key);
     }
 
-    private static NamespacedKey key(Attribute attribute) {
-        if (attribute == null) return AmplifierUtil.DISPLAY_DURABILITY_KEY;
-        return new NamespacedKey(RogueLikeItems.plugin(),
-                attribute.key().toString()
-                        .replace(":", "_") + "_amplifier");
+    private static NamespacedKey randomKey() {
+        return new NamespacedKey(RogueLikeItems.plugin(), UUID.randomUUID().toString());
     }
 
-    private static void setPersistentData(ItemStack item, boolean inPercent, Attribute attribute) {
+    private static void setPersistentData(ItemStack item, boolean inPercent, NamespacedKey key) {
         ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(key(attribute), PersistentDataType.BOOLEAN, inPercent);
+        meta.getPersistentDataContainer().set(key, PersistentDataType.BOOLEAN, inPercent);
         item.setItemMeta(meta);
     }
 
@@ -166,10 +162,10 @@ final public class AttributeModifiersAmplifierUtil {
                 ItemAttributeModifiers.Entry ogResEntry = resOgAttributes.modifiers().stream()
                         .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
 
-                if (ogInputEntry != null && input.getItemMeta().getPersistentDataContainer().has(key(e.attribute()))) {
+                if (ogInputEntry != null && input.getItemMeta().getPersistentDataContainer().has(e.modifier().getKey())) {
                     double base = ogInputEntry.modifier().getAmount();
                     double modifiedValue = e.modifier().getAmount();
-                    boolean inPercent = input.getItemMeta().getPersistentDataContainer().get(key(e.attribute()), PersistentDataType.BOOLEAN);
+                    boolean inPercent = input.getItemMeta().getPersistentDataContainer().get(e.modifier().getKey(), PersistentDataType.BOOLEAN);
                     double amplifier = inPercent ? (modifiedValue / base) - 1 : modifiedValue - base;
 
                     if (ogResEntry != null) base++;
