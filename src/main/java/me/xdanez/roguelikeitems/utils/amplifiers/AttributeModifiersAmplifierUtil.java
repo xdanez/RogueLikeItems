@@ -66,9 +66,10 @@ final public class AttributeModifiersAmplifierUtil {
                 if (ConfigUtil.useAmplifier(cam, material)) {
                     double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
                     if (amplifier != 0) {
-                        DurabilityAmplifierUtil.setDurabilityData(item, amplifier, cam.inPercent());
-                        setPersistentData(item, cam.inPercent(), AmplifierUtil.DISPLAY_DURABILITY_KEY);
-                        LoreUtil.setDurabilityLore(modifiedAttributes, group, amplifier, amplifier > 0 ? GREEN : NEGATIVE, cam.inPercent());
+                        if (DurabilityAmplifierUtil.setDurabilityData(item, amplifier, cam.inPercent())) {
+                            setPersistentData(item, cam.inPercent(), AmplifierUtil.DISPLAY_DURABILITY_KEY);
+                            LoreUtil.setDurabilityLore(modifiedAttributes, group, amplifier, amplifier > 0 ? GREEN : NEGATIVE, cam.inPercent());
+                        }
                     }
                 }
                 return;

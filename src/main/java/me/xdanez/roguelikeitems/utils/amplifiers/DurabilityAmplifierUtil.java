@@ -10,10 +10,10 @@ import org.bukkit.persistence.PersistentDataType;
 
 final public class DurabilityAmplifierUtil {
 
-    public static void setDurabilityData(ItemStack item, double amplifier, boolean inPercent) {
+    public static boolean setDurabilityData(ItemStack item, double amplifier, boolean inPercent) {
         Material material = item.getType();
         int maxDurabilityOfItem = material.getMaxDurability();
-        if (!ItemType.isBreakable(material) || maxDurabilityOfItem == 0) return;
+        if (!ItemType.isBreakable(material) || maxDurabilityOfItem == 0) return false;
 
         int amplifiedMaxDurability = (int) Math.round(maxDurabilityOfItem + (inPercent ? maxDurabilityOfItem * amplifier : amplifier));
         if (amplifiedMaxDurability <= 0) amplifiedMaxDurability = 1;
@@ -21,6 +21,7 @@ final public class DurabilityAmplifierUtil {
         item.setData(DataComponentTypes.MAX_DAMAGE, amplifiedMaxDurability);
 
         LoreUtil.setDurabilityLore(item, amplifier);
+        return true;
     }
 
     public static double getAmplifier(ItemStack item) {

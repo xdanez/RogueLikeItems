@@ -79,6 +79,10 @@ public final class ItemType {
                 || configData.getIncludeItemsList().contains(material);
     }
 
+    public static boolean isModifiableNoIncludeList(Material material) {
+        return isModifiable(material) && !configData.getIncludeItemsList().contains(material);
+    }
+
     public static boolean isBreakable(Material material) {
         return isWeapon(material)
                 || isArmor(material)
