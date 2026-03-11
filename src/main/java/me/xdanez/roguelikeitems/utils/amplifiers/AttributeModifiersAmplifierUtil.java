@@ -50,7 +50,9 @@ final public class AttributeModifiersAmplifierUtil {
             if (cam != null && ConfigUtil.useAmplifier(cam, material)) {
                 double amplifier = AmplifierUtil.getRandomAmplifierValue(cam);
                 double base = e.modifier().getAmount();
-                double extra = cam.inPercent() ? base * amplifier : amplifier;
+                double extra = (attribute.equals(Attribute.ATTACK_SPEED) ? -1.0 : 1.0)
+                        * (cam.inPercent() ? base * amplifier : amplifier);
+                if (extra == 0) extra = 1 * amplifier;
                 double amount = base + extra;
                 addCustomModifier(modifiedAttributes, amount, amplifier, extra, attribute, cam.inPercent(), group, item);
                 continue;
