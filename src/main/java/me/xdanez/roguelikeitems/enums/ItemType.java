@@ -69,14 +69,15 @@ public final class ItemType {
     }
 
     public static boolean isModifiable(Material material) {
-        return isTool(material)
+        return !configData.getIgnoreItemsList().contains(material)
+                && (isTool(material)
                 || isWeapon(material)
                 || isArmor(material)
                 || isShield(material)
                 || isPetArmor(material)
                 || isSaddle(material)
                 || isCarvedPumpkin(material)
-                || configData.getIncludeItemsList().contains(material);
+                || configData.getIncludeItemsList().contains(material));
     }
 
     public static boolean isModifiableNoIncludeList(Material material) {

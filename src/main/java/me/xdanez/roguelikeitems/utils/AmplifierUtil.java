@@ -4,7 +4,6 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
 import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.ItemType;
-import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.models.CustomAttributeModifier;
 import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
@@ -23,8 +22,6 @@ final public class AmplifierUtil {
         Material material = item.getType();
         if (material.equals(Material.AIR)) return;
         if (!ItemType.isModifiable(material)) return;
-
-        if (ConfigData.getConfigData().getIgnoreItemsList().contains(material)) return;
 
         AttributeModifiersAmplifierUtil.setAmplifiers(item);
     }
