@@ -158,25 +158,37 @@ final public class AttributeModifiersAmplifierUtil {
         ItemAttributeModifiers resOgAttributes = ItemStack.of(result.getType()).getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 
         for (ItemAttributeModifiers.Entry e : inputAttributes.modifiers()) {
+            Attribute attribute = e.attribute();
             if (!e.modifier().key().equals(AmplifierUtil.DISPLAY_DURABILITY_KEY)) {
                 ItemAttributeModifiers.Entry ogInputEntry = ogInputAttributes.modifiers().stream()
-                        .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
+                        .filter(i -> i.attribute().equals(attribute)).findFirst().orElse(null);
 
                 ItemAttributeModifiers.Entry ogResEntry = resOgAttributes.modifiers().stream()
-                        .filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
+                        .filter(i -> i.attribute().equals(attribute)).findFirst().orElse(null);
 
                 if (ogInputEntry != null && input.getItemMeta().getPersistentDataContainer().has(e.modifier().getKey())) {
                     double base = ogInputEntry.modifier().getAmount();
                     double modifiedValue = e.modifier().getAmount();
                     boolean inPercent = input.getItemMeta().getPersistentDataContainer().get(e.modifier().getKey(), PersistentDataType.BOOLEAN);
-                    double amplifier = inPercent ? (modifiedValue / base) - 1 : modifiedValue - base;
+                    double amplifier = base == 0 ? modifiedValue :
+                            inPercent ? (modifiedValue / base) - 1 : modifiedValue - base;
 
-                    if (ogResEntry != null) base++;
+                    if (ogResEntry != null) base = ogResEntry.modifier().getAmount();
 
                     double extra = inPercent ? base * amplifier : amplifier;
+                    if (extra == 0) extra = 1 * amplifier;
+
                     double amount = base + extra;
 
-                    addCustomModifier(modifiedAttributes, amount, amplifier, extra, e.attribute(), inPercent, e.getGroup(), null);
+                    addCustomModifier(modifiedAttributes,
+                            amount,
+                            (attribute.equals(Attribute.ATTACK_SPEED) ? -1 : 1) * amplifier,
+                            extra,
+                            attribute,
+                            inPercent,
+                            e.getGroup(),
+                            null
+                    );
                     continue;
                 }
 
@@ -185,7 +197,7 @@ final public class AttributeModifiersAmplifierUtil {
                     continue;
                 }
             }
-            modifiedAttributes.addModifier(e.attribute(), e.modifier(), e.getGroup(), e.display());
+            modifiedAttributes.addModifier(attribute, e.modifier(), e.getGroup(), e.display());
         }
 
         for (ItemAttributeModifiers.Entry e : resOgAttributes.modifiers()) {
