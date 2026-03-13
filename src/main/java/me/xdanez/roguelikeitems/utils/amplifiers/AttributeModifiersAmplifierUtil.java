@@ -52,7 +52,7 @@ final public class AttributeModifiersAmplifierUtil {
                 double base = e.modifier().getAmount();
                 double extra = (attribute.equals(Attribute.ATTACK_SPEED) ? -1.0 : 1.0)
                         * (cam.inPercent() ? base * amplifier : amplifier);
-                if (extra == 0) extra = 1 * amplifier;
+                if (extra == 0) extra = amplifier;
                 double amount = base + extra;
                 addCustomModifier(modifiedAttributes, amount, amplifier, extra, attribute, cam.inPercent(), group, item);
                 continue;
@@ -113,7 +113,7 @@ final public class AttributeModifiersAmplifierUtil {
                                         + (amplifier != 0
                                         ? " (" + (amplifier > 0 ? "+" : "")
                                         + (inPercent ? ((Math.round(amplifier * 100)) + "%") : Math.round(amplifier))
-                                        + (inPercent && showAdjustedValues ? " / " + Math.round(extra * 100.0) / 100.0 : "") + ") "
+                                        + (inPercent && showAdjustedValues ? " / " + (extra > 0 ? "+" : "") + Math.round(extra * 100.0) / 100.0 : "") + ") "
                                         : " "))
                                 .append(Component.translatable(attribute.translationKey()))
                                 .color(TextColor.color(attribute.getSentiment().equals(Attribute.Sentiment.NEUTRAL) ? NEUTRAL
