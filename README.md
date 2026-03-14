@@ -27,5 +27,5 @@ It is also possible to change the max-durability of items with the key "durabili
 
 ## compatibility 🧩
 
-plugin version: 1.3.2 <br>
+plugin version: 1.3.3 <br>
 Paper: 1.21.9 - 1.21.11 
