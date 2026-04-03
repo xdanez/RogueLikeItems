@@ -182,7 +182,7 @@ final public class AttributeModifiersAmplifierUtil {
 
                     addCustomModifier(modifiedAttributes,
                             amount,
-                            (attribute.equals(Attribute.ATTACK_SPEED) ? -1 : 1) * amplifier,
+                            (attribute.equals(Attribute.ATTACK_SPEED) && base != 0 ? -1.0 : 1.0) * amplifier,
                             extra,
                             attribute,
                             inPercent,
