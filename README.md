@@ -2,7 +2,7 @@
 
 Add random attribute modifiers to items.
 
-![Iron sword with random amplifiers](https://cdn.modrinth.com/data/cached_images/5b4bb85d6488e64c33d8544d89e20f7225fbdef1.png)
+![Iron Sword with random amplifiers](https://cdn.modrinth.com/data/cached_images/eb6c9886dbc9fba24ffd8c47c4f259badd0396cd.png)
 
 A list of all attributes can be found here: https://minecraft.wiki/w/Attribute#Attributes <br>
 It is also possible to change the max-durability of items with the key "durability"!
@@ -27,5 +27,5 @@ It is also possible to change the max-durability of items with the key "durabili
 
 ## compatibility 🧩
 
-plugin version: 1.3.2 <br>
+plugin version: 1.3.3 <br>
 Paper: 1.21.9 - 1.21.11 

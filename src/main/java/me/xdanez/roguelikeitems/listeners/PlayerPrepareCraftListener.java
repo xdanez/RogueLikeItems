@@ -1,5 +1,6 @@
 package me.xdanez.roguelikeitems.listeners;
 
+import me.xdanez.roguelikeitems.utils.AmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerPrepareCraftListener implements Listener {
 
@@ -26,7 +28,7 @@ public class PlayerPrepareCraftListener implements Listener {
         if (!result.getType().equals(Material.WARPED_FUNGUS_ON_A_STICK)
                 && !result.getType().equals(Material.CARROT_ON_A_STICK)) return;
 
-        DurabilityAmplifierUtil.setDurabilityData(result, amplifier);
+        DurabilityAmplifierUtil.setDurabilityData(result, amplifier, fishingRod.getPersistentDataContainer().get(AmplifierUtil.DISPLAY_DURABILITY_KEY, PersistentDataType.BOOLEAN));
         AttributeModifiersAmplifierUtil.copyAttributes(fishingRod, result);
         e.getInventory().setResult(result);
     }

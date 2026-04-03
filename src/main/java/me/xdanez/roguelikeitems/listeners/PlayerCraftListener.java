@@ -55,7 +55,7 @@ public class PlayerCraftListener implements Listener {
         for (int i = 0; i < craftedAmt; i++) {
             ItemStack item = new ItemStack(material);
             AmplifierUtil.setAmplifiers(item);
-            player.getInventory().addItem(item);
+            player.give(item);
         }
         ItemStack[] craftingGrid = e.getInventory().getMatrix();
         for (ItemStack item : craftingGrid) {

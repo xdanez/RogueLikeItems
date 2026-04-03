@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerPrepareSmithingTableListener implements Listener {
 
@@ -26,7 +27,14 @@ public class PlayerPrepareSmithingTableListener implements Listener {
         if (durabilityAmplifier == 0 && !hasAnyAmplifier) return;
 
         if (durabilityAmplifier != 0) {
-            DurabilityAmplifierUtil.setDurabilityData(result, Math.round(durabilityAmplifier * 100.0) / 100.0);
+            DurabilityAmplifierUtil
+                    .setDurabilityData(
+                            result,
+                            Math.round(durabilityAmplifier * 100.0) / 100.0,
+                            input.getPersistentDataContainer().get(
+                                    AmplifierUtil.DISPLAY_DURABILITY_KEY,
+                                    PersistentDataType.BOOLEAN)
+                    );
         }
 
         if (hasAnyAmplifier) {

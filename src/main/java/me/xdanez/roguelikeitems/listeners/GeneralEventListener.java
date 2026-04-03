@@ -1,5 +1,6 @@
 package me.xdanez.roguelikeitems.listeners;
 
+import me.xdanez.roguelikeitems.enums.ItemType;
 import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.utils.AmplifierUtil;
 import org.bukkit.Material;
@@ -90,6 +91,17 @@ public class GeneralEventListener implements Listener {
         entityEquipment.setItemInMainHand(mainHand);
         entityEquipment.setItemInOffHand(offHand);
         entityEquipment.setArmorContents(armor);
+    }
+
+    @EventHandler
+    public void onMobDeath(EntityDeathEvent e) {
+        if (!config.useMobDrops()) return;
+        for (ItemStack item : e.getDrops()) {
+            if (AmplifierUtil.hasAnyAmplifier(item) || ItemType.isModifiableNoIncludeList(item.getType()))
+                continue;
+
+            AmplifierUtil.setAmplifiers(item);
+        }
     }
 
     @EventHandler

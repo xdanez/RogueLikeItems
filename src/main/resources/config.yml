@@ -90,6 +90,10 @@ use-vault: true
 # default: true
 bow-mainhand-attack: true
 
+# attack damage on bows modifying projectile damage
+# default: true
+modify-projectile-damage: true
+
 # by default Minecraft shows the adjusted value for attack damage and speed
 # the value for attack damage is always +1 while attack speed +4
 # default: true
@@ -99,6 +103,15 @@ bow-mainhand-attack: true
 #       This only changes the displayed text, not the value itself!
 show-adjusted-values: true
 
+# use item lore for displaying durability instead of displaying it at attribute modifier list
+# default: false
+use-legacy-durability-lore: false
+
 # ignore items for all attributes
 # empty by default
 ignore-items: [ ]
+
+# by default tools, weapons, armor, saddles and harnesses are modifiable
+# here you can include "non-conventional" items or blocks
+# empty by default
+include-items: [ ]

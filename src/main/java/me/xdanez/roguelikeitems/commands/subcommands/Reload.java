@@ -40,8 +40,13 @@ public class Reload extends SubCommand {
 
     @Override
     public void execute(@NotNull CommandSender sender, String[] args) {
-        RogueLikeItems.getPlugin(RogueLikeItems.class).reloadConfig();
         Pair<Integer, Integer> validConfig = ConfigUtil.validateConfig();
+        if (validConfig == null) {
+            if (sender instanceof Player)
+                sender.sendMessage(Component.text("Unable to reload config. Look in console for more information")
+                        .color(TextColor.color(0xff0000)));
+            return;
+        }
         int amtWarning = validConfig.left();
         int amtError = validConfig.right();
         String msg = msg(amtError, amtWarning);

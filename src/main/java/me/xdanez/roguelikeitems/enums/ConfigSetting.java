@@ -8,8 +8,11 @@ public enum ConfigSetting implements ConfigType {
     USE_BARTERING("use-bartering"),
     USE_VAULT("use-vault"),
     IGNORE_ITEMS("ignore-items"),
+    INCLUDE_ITEMS("include-items"),
     BOW_MAINHAND_ATTACK("bow-mainhand-attack"),
-    SHOW_ADJUSTED_VALUES("show-adjusted-values");
+    MODIFY_PROJECTILE_DAMAGE("modify-projectile-damage"),
+    SHOW_ADJUSTED_VALUES("show-adjusted-values"),
+    USE_LEGACY_DURABILITY_LORE("use-legacy-durability-lore");
 
     private final String key;
 

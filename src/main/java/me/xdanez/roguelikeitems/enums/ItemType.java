@@ -5,17 +5,29 @@ import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlotGroup;
 
 public final class ItemType {
+    private static final ConfigData configData = ConfigData.getConfigData();
+
     public static boolean isArmor(Material material) {
         String materialStr = material.toString();
         return materialStr.endsWith("_HELMET")
                 || materialStr.endsWith("_CHESTPLATE")
                 || materialStr.endsWith("_LEGGINGS")
                 || materialStr.endsWith("_BOOTS")
-                || materialStr.endsWith("ELYTRA");
+                || material.equals(Material.ELYTRA);
+    }
+
+    public static boolean isCarvedPumpkin(Material material) {
+        return material.equals(Material.CARVED_PUMPKIN);
     }
 
     public static boolean isPetArmor(Material material) {
-        return material.toString().endsWith("_ARMOR");
+        String materialStr = material.toString();
+        return materialStr.endsWith("_ARMOR")
+                || materialStr.endsWith("_HARNESS");
+    }
+
+    public static boolean isSaddle(Material material) {
+        return material.equals(Material.SADDLE);
     }
 
     public static boolean isRanged(Material material) {
@@ -57,24 +69,44 @@ public final class ItemType {
     }
 
     public static boolean isModifiable(Material material) {
-        return isTool(material) || isWeapon(material) || isArmor(material) || isShield(material) || isPetArmor(material);
+        return !configData.getIgnoreItemsList().contains(material)
+                && (isTool(material)
+                || isWeapon(material)
+                || isArmor(material)
+                || isShield(material)
+                || isPetArmor(material)
+                || isSaddle(material)
+                || isCarvedPumpkin(material)
+                || configData.getIncludeItemsList().contains(material));
+    }
+
+    public static boolean isModifiableNoIncludeList(Material material) {
+        return isModifiable(material) && !configData.getIncludeItemsList().contains(material);
+    }
+
+    public static boolean isBreakable(Material material) {
+        return isWeapon(material)
+                || isArmor(material)
+                || isTool(material)
+                || isShield(material);
     }
 
     public static EquipmentSlotGroup getGroup(Material material) {
         if (isRanged(material)) {
-            if (ConfigData.getConfigData().useBowMainHandAttack()) return EquipmentSlotGroup.MAINHAND;
+            if (configData.useBowMainHandAttack()) return EquipmentSlotGroup.MAINHAND;
             else return EquipmentSlotGroup.HAND;
         }
         if (isShield(material)) return EquipmentSlotGroup.HAND;
         if (isWeaponOrTool(material)) return EquipmentSlotGroup.MAINHAND;
         if (isPetArmor(material)) return EquipmentSlotGroup.BODY;
+        if (isSaddle(material)) return EquipmentSlotGroup.SADDLE;
 
         String materialStr = material.toString();
-        if (materialStr.endsWith("_HELMET")) return EquipmentSlotGroup.HEAD;
+        if (materialStr.endsWith("_HELMET") || isCarvedPumpkin(material)) return EquipmentSlotGroup.HEAD;
         if (materialStr.endsWith("_CHESTPLATE") || material.equals(Material.ELYTRA)) return EquipmentSlotGroup.CHEST;
         if (materialStr.endsWith("_LEGGINGS")) return EquipmentSlotGroup.LEGS;
         if (materialStr.endsWith("_BOOTS")) return EquipmentSlotGroup.FEET;
 
-        return EquipmentSlotGroup.ARMOR;
+        return EquipmentSlotGroup.HAND;
     }
 }

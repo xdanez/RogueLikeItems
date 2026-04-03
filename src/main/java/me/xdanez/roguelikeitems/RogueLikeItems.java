@@ -14,7 +14,10 @@ public final class RogueLikeItems extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        ConfigUtil.validateConfig();
+        if (ConfigUtil.validateConfig() == null) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         getServer().getPluginManager().registerEvents(new PlayerCraftListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerPrepareSmithingTableListener(), this);

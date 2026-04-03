@@ -2,27 +2,26 @@ package me.xdanez.roguelikeitems.utils;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import me.xdanez.roguelikeitems.RogueLikeItems;
 import me.xdanez.roguelikeitems.enums.ItemType;
-import me.xdanez.roguelikeitems.models.ConfigData;
 import me.xdanez.roguelikeitems.models.CustomAttributeModifier;
 import me.xdanez.roguelikeitems.utils.amplifiers.AttributeModifiersAmplifierUtil;
 import me.xdanez.roguelikeitems.utils.amplifiers.DurabilityAmplifierUtil;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 final public class AmplifierUtil {
 
+    public static final NamespacedKey DISPLAY_DURABILITY_KEY = new NamespacedKey(RogueLikeItems.plugin(), "display_durability");
+
     public static void setAmplifiers(ItemStack item) {
         if (item == null) return;
         Material material = item.getType();
         if (material.equals(Material.AIR)) return;
         if (!ItemType.isModifiable(material)) return;
-
-        if (ConfigData.getConfigData().getIgnoreItemList().contains(material)) return;
-
-        DurabilityAmplifierUtil.setDurabilityData(item);
 
         AttributeModifiersAmplifierUtil.setAmplifiers(item);
     }
@@ -46,17 +45,12 @@ final public class AmplifierUtil {
 
         ItemAttributeModifiers attributes = item.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
         for (ItemAttributeModifiers.Entry e : attributes.modifiers()) {
-            ItemAttributeModifiers.Entry defaultAttribute = ItemStack.of(item.getType())
-                    .getData(DataComponentTypes.ATTRIBUTE_MODIFIERS).modifiers()
-                    .stream().filter(i -> i.attribute().equals(e.attribute())).findFirst().orElse(null);
-
-            if (defaultAttribute == null) return true;
-
-            double defaultAmount = defaultAttribute.modifier().getAmount();
-            double modifiedAmount = e.modifier().getAmount();
-
-            if (defaultAmount != modifiedAmount) return true;
+            if (isCustomKey(e.modifier().getKey())) return true;
         }
         return false;
+    }
+
+    private static boolean isCustomKey(NamespacedKey key) {
+        return key.key().toString().contains("roguelikeitems");
     }
 }

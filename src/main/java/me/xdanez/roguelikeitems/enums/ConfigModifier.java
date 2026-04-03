@@ -1,6 +1,6 @@
 package me.xdanez.roguelikeitems.enums;
 
-public enum Config implements ConfigType {
+public enum ConfigModifier implements ConfigType {
     FROM("from"),
     TO("to"),
     IGNORE_ITEMS("ignore-items"),
@@ -14,7 +14,7 @@ public enum Config implements ConfigType {
 
     private final String key;
 
-    Config(String key) {
+    ConfigModifier(String key) {
         this.key = key;
     }
 
