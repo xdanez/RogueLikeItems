@@ -30,6 +30,7 @@ public class GeneralEventListener implements Listener {
 
     @EventHandler
     public void onItemInItemFrameSpawn(ChunkLoadEvent e) {
+        if (!config.modifyItemframeContents()) return;
         if (!e.isNewChunk()) return;
         for (Entity entity : e.getChunk().getEntities()) {
             if (!entity.getType().equals(EntityType.ITEM_FRAME)) continue;

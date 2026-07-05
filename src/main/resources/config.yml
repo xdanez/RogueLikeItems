@@ -86,6 +86,10 @@ use-bartering: true
 # default: true
 use-vault: true
 
+# items found in itemframes being modified (for example: Elytras in End Citys)
+# default: true
+modify-itemframe-contents: true
+
 # attributes for attack damage and speed on cross/bows will only be for mainhand instead of simply holding it
 # default: true
 bow-mainhand-attack: true
