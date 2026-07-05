@@ -7,6 +7,7 @@ public enum ConfigSetting implements ConfigType {
     USE_CRAFTING("use-crafting"),
     USE_BARTERING("use-bartering"),
     USE_VAULT("use-vault"),
+    MODIFY_ITEMFRAME_CONTENTS("modify-itemframe-contents"),
     IGNORE_ITEMS("ignore-items"),
     INCLUDE_ITEMS("include-items"),
     BOW_MAINHAND_ATTACK("bow-mainhand-attack"),

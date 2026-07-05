@@ -62,6 +62,10 @@ public class ConfigData {
         return RogueLikeItems.config().getBoolean(ConfigSetting.USE_VAULT.toString());
     }
 
+    public boolean modifyItemframeContents() {
+        return RogueLikeItems.config().getBoolean(ConfigSetting.MODIFY_ITEMFRAME_CONTENTS.toString());
+    }
+
     public boolean useBowMainHandAttack() {
         return RogueLikeItems.config().getBoolean(ConfigSetting.BOW_MAINHAND_ATTACK.toString());
     }
